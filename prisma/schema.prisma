@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String        @id @default(cuid())
+  clerkUserId      String        @unique
+  email            String        @unique
+  username         String?
+  profileImages    String[] // Change from String to String[] for multiple images
+  profileType      String
+  name             String?
+  imageUrl         String?
+  band             Band?         @relation("UserBand")
+  gigProvider      GigProvider?  @relation("UserGigProvider")
+  interactionsFrom Interaction[] @relation("InteractionFrom")
+  interactionsTo   Interaction[] @relation("InteractionTo")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model Band {
+  id           String   @id @default(cuid())
+  name         String
+  genre        String
+  location     String
+  description  String?
+  website      String?
+  videoUrl     String?
+  profileImage String?
+  imageUrl     String? // Add this line for imageUrl (band profile picture)
+  userId       String   @unique
+  user         User     @relation("UserBand", fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model GigProvider {
+  id           String   @id @default(cuid())
+  name         String
+  services     String
+  location     String
+  description  String?
+  website      String?
+  profileImage String?
+  imageUrl     String? // Add this line for imageUrl (gig provider profile picture)
+  userId       String   @unique
+  user         User     @relation("UserGigProvider", fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Interaction {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  message    String?
+  status     String // e.g., "pending", "accepted", "rejected"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  fromUser User @relation("InteractionFrom", fields: [fromUserId], references: [id])
+  toUser   User @relation("InteractionTo", fields: [toUserId], references: [id])
+}
