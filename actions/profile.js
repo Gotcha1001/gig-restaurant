@@ -128,3 +128,36 @@ export async function getUserProfile() {
     throw error;
   }
 }
+
+//get all ids for both bands and gig providers
+export async function getUserProfileById(userId) {
+  if (!userId) {
+    throw new Error("No user ID provided");
+  }
+
+  try {
+    const user = await db.user.findFirst({
+      where: {
+        OR: [{ id: userId }, { clerkUserId: userId }],
+      },
+      include: {
+        band: true,
+        gigProvider: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found for ID " + userId);
+    }
+
+    return {
+      name: user.name || "",
+      imageUrl: user.imageUrl || "",
+      profileType: user.profileType,
+      profile: user.band || user.gigProvider || {},
+    };
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    throw error;
+  }
+}

@@ -35,7 +35,7 @@ const GigProvidersPage = async () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {gigProviders.map((provider, index) => (
           <FeatureMotionWrapper key={provider.id} index={index}>
-            <Link href={`/view-profile/${provider.id}`}>
+            <Link href={`/view-profile/${provider.userId}`}>
               <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer h-full">
                 <CardHeader>
                   <div className="relative w-full h-48 mb-4">

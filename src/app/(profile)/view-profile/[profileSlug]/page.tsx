@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getUserProfile } from "../../../../../actions/profile";
-import { useRouter } from "next/navigation";
+import { getUserProfileById } from "../../../../../actions/profile";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import MotionImageAll from "@/components/MotionImageAll";
@@ -27,26 +27,36 @@ export default function ProfileDisplay() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+
+  const { profileSlug } = useParams(); // Get the profileSlug from the route params
+  console.log("Fetched User ID:", profileSlug);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const userData = await getUserProfile();
-        if (!userData || !userData.profile || !userData.profile.name) {
-          router.push("/profile");
+        if (profileSlug) {
+          const userData = await getUserProfileById(profileSlug); // Use the profileSlug here
+          if (!userData || !userData.profile) {
+            setError("Profile not found for ID " + profileSlug);
+          } else {
+            setProfile(userData);
+          }
         } else {
-          setProfile(userData);
+          setError("No user ID provided in URL");
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load profile");
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [router]);
+  }, [profileSlug]); // Run the effect when profileSlug changes
 
   if (loading)
     return (
@@ -98,7 +108,7 @@ export default function ProfileDisplay() {
           }}
         >
           <MotionImageAll>
-            <h1 className="text-6xl sm:text-3xl md:text-6xl lg:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4 gradient-title">
+            <h1 className="text-6xl sm:text-3xl md:text-6xl lg:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4 gradient-title text-center">
               {profile.profile.name}
             </h1>
           </MotionImageAll>
