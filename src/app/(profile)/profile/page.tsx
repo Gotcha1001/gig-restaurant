@@ -46,7 +46,7 @@ export default function UserProfile() {
   useEffect(() => {
     if (profile) {
       toast.success("Profile created successfully");
-      router.push(`/profile/${profile.id}`);
+      router.push("/");
     }
   }, [profile, router]);
 
@@ -82,7 +82,7 @@ export default function UserProfile() {
       {/* Main Card */}
       <div className="relative z-10 w-full max-w-2xl p-8 bg-white rounded-lg shadow-lg gradient-background2 opacity-50">
         <h1 className="text-5xl font-bold text-center gradient-title mb-8">
-          Create Your Profile
+          Create Or Update Your Profile
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

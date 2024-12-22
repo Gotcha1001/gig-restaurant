@@ -24,37 +24,38 @@ export async function createUserProfile({
       throw new Error("Missing required fields");
     }
 
-    // First, ensure the user exists in your database
-    let user = await db.user.findUnique({
+    // Upsert the user first
+    const user = await db.user.upsert({
       where: { clerkUserId },
+      update: {
+        profileType,
+        name,
+        imageUrl,
+      },
+      create: {
+        clerkUserId,
+        email: "", // You'll need to get this from Clerk
+        profileType,
+        name,
+        imageUrl,
+      },
     });
 
-    // If user doesn't exist, create them
-    if (!user) {
-      user = await db.user.create({
-        data: {
-          clerkUserId,
-          email: "", // You'll need to get this from Clerk
-          profileType,
-          name,
-          imageUrl,
-        },
-      });
-    } else {
-      // Update the profileType if the user exists
-      user = await db.user.update({
-        where: { clerkUserId },
-        data: {
-          profileType, // Ensure profileType is updated
-        },
-      });
-    }
-
-    // Create the specific profile type
+    // Upsert the specific profile type
     let userProfile;
     if (profileType === "band") {
-      userProfile = await db.band.create({
-        data: {
+      userProfile = await db.band.upsert({
+        where: { userId: user.id },
+        update: {
+          name,
+          imageUrl,
+          genre,
+          location,
+          description,
+          website,
+          videoUrl,
+        },
+        create: {
           name,
           imageUrl,
           genre,
@@ -70,8 +71,17 @@ export async function createUserProfile({
         },
       });
     } else if (profileType === "gigProvider") {
-      userProfile = await db.gigProvider.create({
-        data: {
+      userProfile = await db.gigProvider.upsert({
+        where: { userId: user.id },
+        update: {
+          name,
+          imageUrl,
+          services,
+          location,
+          description,
+          website,
+        },
+        create: {
           name,
           imageUrl,
           services,
@@ -91,7 +101,7 @@ export async function createUserProfile({
 
     return userProfile;
   } catch (error) {
-    console.error("Error creating profile:", error);
+    console.error("Error creating/updating profile:", error);
     throw error;
   }
 }
@@ -158,6 +168,72 @@ export async function getUserProfileById(userId) {
     };
   } catch (error) {
     console.error("Error fetching profile:", error);
+    throw error;
+  }
+}
+
+export async function updateUserProfile({
+  name,
+  imageUrl,
+  profileType,
+  location,
+  description,
+  website,
+  genre,
+  services,
+  videoUrl,
+}) {
+  try {
+    const { userId: clerkUserId } = await auth();
+
+    if (!clerkUserId) {
+      throw new Error("User is not authenticated");
+    }
+
+    // Validate input
+    if (!name || !imageUrl || !profileType || !location) {
+      throw new Error("Missing required fields");
+    }
+
+    const user = await db.user.findUnique({ where: { clerkUserId } });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    let updatedProfile;
+    if (profileType === "band") {
+      updatedProfile = await db.band.update({
+        where: { userId: user.id },
+        data: {
+          name,
+          imageUrl,
+          genre,
+          location,
+          description,
+          website,
+          videoUrl,
+        },
+      });
+    } else if (profileType === "gigProvider") {
+      updatedProfile = await db.gigProvider.update({
+        where: { userId: user.id },
+        data: {
+          name,
+          imageUrl,
+          services,
+          location,
+          description,
+          website,
+        },
+      });
+    } else {
+      throw new Error("Invalid profile type");
+    }
+
+    return updatedProfile;
+  } catch (error) {
+    console.error("Error updating profile:", error);
     throw error;
   }
 }

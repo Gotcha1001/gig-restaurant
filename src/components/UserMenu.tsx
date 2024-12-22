@@ -1,9 +1,15 @@
 "use client";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { ChartNoAxesGantt } from "lucide-react";
 import React from "react";
 
 const UserMenu = () => {
+  const { user } = useUser(); // Get current user information from Clerk
+
+  if (!user) {
+    return null; // or return a fallback UI
+  }
+
   return (
     <UserButton
       appearance={{
@@ -14,9 +20,9 @@ const UserMenu = () => {
     >
       <UserButton.MenuItems>
         <UserButton.Link
-          label="My Organizations"
+          label="My Profile"
           labelIcon={<ChartNoAxesGantt size={15} />}
-          href="/onboarding"
+          href={`/view-profile/${user.id}`}
         />
         <UserButton.Action label="manageAccount" />
       </UserButton.MenuItems>
