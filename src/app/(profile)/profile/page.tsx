@@ -1,14 +1,14 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createUserProfile } from "../../../../actions/profile";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { createUserProfile, getUserProfile } from "../../../../actions/profile";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import useFetch from "../../../../hooks/use-fetch";
 import { profileSchema, gigProviderSchema } from "@/lib/validation";
 import type {
@@ -21,6 +21,7 @@ type ProfileType = "band" | "gigProvider";
 
 export default function UserProfile() {
   const [profileType, setProfileType] = useState<ProfileType>("band");
+  const [isUpdate, setIsUpdate] = useState(false);
   const router = useRouter();
 
   const schema = profileType === "band" ? profileSchema : gigProviderSchema;
@@ -30,6 +31,7 @@ export default function UserProfile() {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(schema),
   });
@@ -43,12 +45,53 @@ export default function UserProfile() {
     createUserProfile as (data: Profile) => Promise<ProfileResponse>
   );
 
+  // Fetch existing profile data
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const existingProfile = await getUserProfile();
+        console.log("Fetched profile:", existingProfile);
+
+        if (existingProfile && existingProfile.profile) {
+          setIsUpdate(true);
+          setProfileType(existingProfile.profileType as ProfileType);
+
+          // Pre-populate form fields with profile data
+          setValue("name", existingProfile.name || "");
+          setValue("imageUrl", existingProfile.imageUrl || "");
+          setValue("location", existingProfile.profile.location || "");
+          setValue("description", existingProfile.profile.description || "");
+          setValue("website", existingProfile.profile.website || "");
+
+          if (existingProfile.profileType === "band") {
+            setValue("genre", existingProfile.profile.genre || "");
+            setValue("videoUrl", existingProfile.profile.videoUrl || "");
+          } else {
+            setValue("services", existingProfile.profile.services || "");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        toast.error("Failed to load profile data");
+      }
+    };
+
+    fetchProfile();
+  }, [setValue]);
+
+  // Handle successful profile creation/update
   useEffect(() => {
     if (profile) {
-      toast.success("Profile created successfully");
+      toast.success(
+        isUpdate
+          ? "Profile updated successfully"
+          : "Profile created successfully"
+      );
+
+      // Redirect to home page after successful submission
       router.push("/");
     }
-  }, [profile, router]);
+  }, [profile, isUpdate, router]);
 
   const onSubmit = async (data: ProfileFormData) => {
     const profileData: Profile =
@@ -76,17 +119,20 @@ export default function UserProfile() {
 
   return (
     <div className="relative min-h-screen flex justify-center items-center py-8">
-      {/* Background Image Container */}
-      <div className="absolute inset-0 z-0 pointer-events-none" />
-
-      {/* Main Card */}
-      <div className="relative z-10 w-full max-w-2xl p-8 bg-white rounded-lg shadow-lg gradient-background2 opacity-50">
-        <h1 className="text-5xl font-bold text-center gradient-title mb-8">
-          Create Or Update Your Profile
-        </h1>
+      <div className="relative z-10 w-full max-w-2xl p-8 gradient-background2 rounded-lg shadow-lg opacity-80">
+        <Alert className="mb-6">
+          <AlertTitle>
+            {isUpdate ? "Update Your Profile" : "Create Your Profile"}
+          </AlertTitle>
+          <AlertDescription>
+            {isUpdate
+              ? "Your existing profile information has been loaded. Make changes and save to update."
+              : "Fill in your profile information to get started."}
+          </AlertDescription>
+        </Alert>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Profile Type */}
+          {/* Profile Type Selection */}
           <div>
             <select
               value={profileType}
@@ -143,8 +189,7 @@ export default function UserProfile() {
               <Textarea
                 {...register("description")}
                 placeholder="Description"
-                className="w-full"
-                rows={3}
+                className="w-full min-h-[100px]"
               />
               {errors.description && (
                 <p className="text-red-500 text-sm mt-1">
@@ -167,7 +212,6 @@ export default function UserProfile() {
               )}
             </div>
 
-            {/* Conditional Genre Field */}
             {profileType === "band" ? (
               <>
                 <div>
@@ -182,6 +226,7 @@ export default function UserProfile() {
                     </p>
                   )}
                 </div>
+
                 <div>
                   <Input
                     {...register("videoUrl")}
@@ -212,18 +257,25 @@ export default function UserProfile() {
             )}
           </div>
 
-          {/* Submit Button */}
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white p-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-8"
+            className="w-full bg-blue-600 text-white p-4 rounded-md hover:bg-blue-700"
           >
-            {loading ? "Creating Profile..." : "Create Profile"}
+            {loading
+              ? isUpdate
+                ? "Updating Profile..."
+                : "Creating Profile..."
+              : isUpdate
+              ? "Update Profile"
+              : "Create Profile"}
           </Button>
 
-          {/* Error Message */}
           {error && (
-            <p className="text-red-500 text-sm mt-1">{error.message}</p>
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error.message}</AlertDescription>
+            </Alert>
           )}
         </form>
       </div>
