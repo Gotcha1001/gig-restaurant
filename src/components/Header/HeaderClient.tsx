@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs"; // Import useUser hook from Clerk
+import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { FolderOpen, PenBox, MapPin, Menu } from "lucide-react";
@@ -12,8 +12,8 @@ import { useRouter } from "next/navigation";
 
 const HeaderClient = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, isLoaded } = useUser(); // Get current user information from Clerk
-  const router = useRouter(); // Use router for redirection
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
@@ -77,10 +77,7 @@ const HeaderClient = () => {
                   </span>
                 </Button>
               </Link>
-            </SignedIn>
 
-            {/* Dynamic Profile Link */}
-            <SignedIn>
               {isLoaded && user ? (
                 <Link href={`/view-profile/${user.id}`}>
                   <Button variant="band" className="flex items-center gap-2">
@@ -89,19 +86,21 @@ const HeaderClient = () => {
                   </Button>
                 </Link>
               ) : (
-                <p>Loading...</p> // Show loading while user info is being fetched
+                <p>Loading...</p>
               )}
+
+              <Link href="/profile">
+                <Button variant="work2" className="flex items-center gap-2">
+                  <PenBox size={18} />
+                  <span className="hidden md:inline">Design Profile</span>
+                </Button>
+              </Link>
             </SignedIn>
 
-            <Link href="/profile">
-              <Button variant="work2" className="flex items-center gap-2">
-                <PenBox size={18} />
-                <span className="hidden md:inline">Design Profile</span>
-              </Button>
-            </Link>
-
             <SignedOut>
-              <SignInButton forceRedirectUrl="/">Login</SignInButton>
+              <SignInButton forceRedirectUrl="/">
+                <Button variant="outline">Login</Button>
+              </SignInButton>
             </SignedOut>
 
             <SignedIn>
@@ -143,7 +142,6 @@ const HeaderClient = () => {
                 </Button>
               </Link>
 
-              {/* Dynamic Profile Link in Mobile */}
               {isLoaded && user ? (
                 <Link href={`/view-profile/${user.id}`} onClick={toggleMenu}>
                   <Button variant="band" className="w-full text-left mb-4">
@@ -165,7 +163,7 @@ const HeaderClient = () => {
               <SignInButton forceRedirectUrl="/profile">
                 <Button
                   variant="outline"
-                  className="w-full text-left "
+                  className="w-full text-left"
                   onClick={toggleMenu}
                 >
                   Login
