@@ -25,7 +25,7 @@ const ActionCall = () => {
             Join thousands of teams already using GIGIFY to streamline their
             hiring of Gigs and boost productivity and their musical Carreers
           </p>
-          <Link href="/profile">
+          <Link href="/sign-in">
             <Button size="lg" className="animate-bounce">
               Start For Free <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
