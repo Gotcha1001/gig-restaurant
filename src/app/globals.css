@@ -160,7 +160,7 @@ html {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -190,17 +190,6 @@ html {
   }
   100% {
     background-position: 0% 50%;
-  }
-}
-
-/* Zoom in and out effect */
-@keyframes zoomBackground {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
   }
 }
 
