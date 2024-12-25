@@ -1,5 +1,14 @@
 import { z } from "zod";
 
+const commonFields = {
+  email: z.string().email("Invalid email format").optional(),
+  phoneNumber: z
+    .string()
+    .regex(/^\+?[\d\s-()]{10,}$/, "Invalid phone number format")
+    .optional(),
+  headerImage: z.string().url("Invalid URL format").optional(),
+};
+
 export const profileSchema = z.object({
   name: z
     .string()
@@ -26,8 +35,9 @@ export const profileSchema = z.object({
   imageUrl: z
     .string()
     .min(1, "ImageUrl Required")
-    .max(100, "ImageUrl Cannot Exceed 100 Characters")
+    .max(200, "ImageUrl Cannot Exceed 100 Characters")
     .optional(),
+  ...commonFields,
 });
 
 export const gigProviderSchema = z.object({
@@ -49,4 +59,5 @@ export const gigProviderSchema = z.object({
     .optional(),
   website: z.string().url("Invalid URL Format").optional(),
   imageUrl: z.string().url("Invalid URL Format").optional(),
+  ...commonFields,
 });

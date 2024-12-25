@@ -101,7 +101,7 @@ const HeaderClient = () => {
             </Link>
 
             <SignedOut>
-              <SignInButton forceRedirectUrl="/profile">Login</SignInButton>
+              <SignInButton forceRedirectUrl="/">Login</SignInButton>
             </SignedOut>
 
             <SignedIn>

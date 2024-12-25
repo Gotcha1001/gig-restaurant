@@ -62,6 +62,9 @@ export default function UserProfile() {
           setValue("location", existingProfile.profile.location || "");
           setValue("description", existingProfile.profile.description || "");
           setValue("website", existingProfile.profile.website || "");
+          setValue("email", existingProfile.profile.email || ""); // add this
+          setValue("phoneNumber", existingProfile.profile.phoneNumber || ""); // add this
+          setValue("headerImage", existingProfile.profile.headerImage || "");
 
           if (existingProfile.profileType === "band") {
             setValue("genre", existingProfile.profile.genre || "");
@@ -171,6 +174,19 @@ export default function UserProfile() {
                 </p>
               )}
             </div>
+            <div className="md:col-span-2">
+              <Input
+                {...register("headerImage")}
+                placeholder="Header Image URL"
+                type="url"
+                className="w-full"
+              />
+              {errors.headerImage && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.headerImage.message}
+                </p>
+              )}
+            </div>
 
             <div>
               <Input
@@ -197,7 +213,7 @@ export default function UserProfile() {
                 </p>
               )}
             </div>
-
+            {/* contact information  */}
             <div>
               <Input
                 {...register("website")}
@@ -210,6 +226,38 @@ export default function UserProfile() {
                   {errors.website.message}
                 </p>
               )}
+            </div>
+
+            {/* new added contact fields */}
+            {/* Contact Information */}
+            <div className="md:col-span-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Input
+                    {...register("email")}
+                    placeholder="Email"
+                    type="email"
+                    className="w-full"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Input
+                    {...register("phoneNumber")}
+                    placeholder="Phone Number"
+                    className="w-full"
+                  />
+                  {errors.phoneNumber && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.phoneNumber.message}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
 
             {profileType === "band" ? (

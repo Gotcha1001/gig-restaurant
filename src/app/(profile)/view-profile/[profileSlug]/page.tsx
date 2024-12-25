@@ -20,6 +20,9 @@ interface Profile {
     genre?: string;
     videoUrl?: string;
     services?: string;
+    email?: string;
+    phoneNumber?: string;
+    headerImage?: string;
   };
 }
 
@@ -85,7 +88,7 @@ export default function ProfileDisplay() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-800 to-purple-900">
         <div className="backdrop-blur-lg bg-white/10 p-8 rounded-2xl shadow-2xl border border-white/20">
           <h2 className="text-yellow-400 text-2xl font-bold">
-            No Profile Found
+            No Profile Found Yet
           </h2>
           <p className="text-gray-300 mt-4">
             Please create a profile to get started.
@@ -129,15 +132,13 @@ export default function ProfileDisplay() {
             <div className="h-64 rounded-3xl overflow-hidden relative">
               <div className="absolute inset-0">
                 <Image
-                  src="/bg.jpg"
+                  src={profile.profile.headerImage || "/bg.jpg"} // Use the headerImage if available, fallback to default
                   alt="Header image"
                   fill
                   className="object-cover object-center rounded-3xl"
                   priority
                 />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-60 mix-blend-overlay" />
-              <div className="absolute inset-0 backdrop-blur-[1px] bg-black/50" />
             </div>
           </MotionWrapperDelay>
 
@@ -208,6 +209,52 @@ export default function ProfileDisplay() {
                   </h3>
                   <p className="text-gray-300">{profile.profile.genre}</p>
                 </div>
+              )}
+
+              {/* Contact Information */}
+              {(profile.profile.email || profile.profile.phoneNumber) && (
+                <MotionWrapperDelay
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.8, delay: 0.8 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 100 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                >
+                  <div className="backdrop-blur-lg bg-indigo-900/20 p-6 rounded-2xl border border-white/20 hover:shadow-2xl hover:bg-gradient-to-r from-red-600 to-purple-600 hover:text-white transition-all duration-300">
+                    <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3">
+                      Contact Information
+                    </h3>
+                    {profile.profile.email && (
+                      <p className="text-gray-300 mb-2">
+                        <span className="font-medium">Email:</span>{" "}
+                        <a
+                          href={`mailto:${profile.profile.email}`}
+                          className="hover:text-blue-400 transition-colors duration-300"
+                        >
+                          {profile.profile.email}
+                        </a>
+                      </p>
+                    )}
+                    {profile.profile.phoneNumber && (
+                      <p className="text-gray-300">
+                        <span className="font-medium">Phone:</span>{" "}
+                        <a
+                          href={`tel:+27${
+                            profile.profile.phoneNumber.startsWith("0")
+                              ? profile.profile.phoneNumber.slice(1)
+                              : profile.profile.phoneNumber
+                          }`}
+                          className="hover:text-blue-400 transition-colors duration-300"
+                        >
+                          {profile.profile.phoneNumber}
+                        </a>
+                      </p>
+                    )}
+                  </div>
+                </MotionWrapperDelay>
               )}
 
               {profile.profileType === "gigProvider" &&

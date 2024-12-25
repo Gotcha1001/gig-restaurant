@@ -33,6 +33,9 @@ model Band {
   website      String?
   videoUrl     String?
   profileImage String?
+  headerImage  String?
+  email        String? // New field
+  phoneNumber  String? // New field
   imageUrl     String? // Add this line for imageUrl (band profile picture)
   userId       String   @unique
   user         User     @relation("UserBand", fields: [userId], references: [id])
@@ -48,6 +51,9 @@ model GigProvider {
   description  String?
   website      String?
   profileImage String?
+  headerImage  String?
+  email        String? // New field
+  phoneNumber  String? // New field
   imageUrl     String? // Add this line for imageUrl (gig provider profile picture)
   userId       String   @unique
   user         User     @relation("UserGigProvider", fields: [userId], references: [id])

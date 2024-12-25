@@ -12,6 +12,9 @@ export async function createUserProfile({
   genre,
   services,
   videoUrl,
+  email, // New field
+  phoneNumber, // New field
+  headerImage, // Add this
 }) {
   try {
     const { userId: clerkUserId } = await auth();
@@ -54,6 +57,9 @@ export async function createUserProfile({
           description,
           website,
           videoUrl,
+          email, // New field
+          phoneNumber, // New field
+          headerImage, // Add this
         },
         create: {
           name,
@@ -63,6 +69,9 @@ export async function createUserProfile({
           description,
           website,
           videoUrl,
+          email, // New field
+          phoneNumber, // New field
+          headerImage, // Add this
           user: {
             connect: {
               id: user.id,
@@ -80,6 +89,9 @@ export async function createUserProfile({
           location,
           description,
           website,
+          email, // New field
+          phoneNumber, // New field
+          headerImage, // Add this
         },
         create: {
           name,
@@ -88,6 +100,9 @@ export async function createUserProfile({
           location,
           description,
           website,
+          email, // New field
+          phoneNumber, // New field
+          headerImage, // Add this
           user: {
             connect: {
               id: user.id,

@@ -4,6 +4,9 @@ export interface BaseProfile {
   location: string;
   description?: string;
   website?: string;
+  email?: string; // New field
+  phoneNumber?: string;
+  headerImage?: string;
 }
 
 export interface BandProfile extends BaseProfile {
@@ -32,6 +35,9 @@ export interface ProfileResponse {
   genre?: string;
   services?: string;
   videoUrl?: string;
+  email?: string; // New field
+  phoneNumber?: string; // New field
+  headerImage?: string; // Add this line
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -46,4 +52,7 @@ export interface ProfileFormData {
   genre?: string;
   services?: string;
   videoUrl?: string;
+  email?: string; // New field
+  phoneNumber?: string; // New field
+  headerImage?: string; // Add this line
 }
