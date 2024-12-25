@@ -64,7 +64,7 @@ export default function Home() {
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Link href="/profile" className="w-full sm:w-auto">
+          <Link href="/sign-in" className="w-full sm:w-auto">
             <Button variant="work2" size="lg" className="w-full sm:w-auto mr-2">
               Get Started <ChevronRight size={18} className="ml-1" />
             </Button>
