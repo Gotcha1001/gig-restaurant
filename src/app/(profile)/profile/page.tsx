@@ -16,6 +16,7 @@ import type {
   ProfileResponse,
   ProfileFormData,
 } from "@/lib/types-profile";
+import { FacebookIcon, InstagramIcon } from "@/components/icons/social-icons";
 
 type ProfileType = "band" | "gigProvider";
 
@@ -65,6 +66,8 @@ export default function UserProfile() {
           setValue("email", existingProfile.profile.email || ""); // add this
           setValue("phoneNumber", existingProfile.profile.phoneNumber || ""); // add this
           setValue("headerImage", existingProfile.profile.headerImage || "");
+          setValue("facebookUrl", existingProfile.profile.facebookUrl || ""); // New field
+          setValue("instagramUrl", existingProfile.profile.instagramUrl || ""); // New field
 
           if (existingProfile.profileType === "band") {
             setValue("genre", existingProfile.profile.genre || "");
@@ -254,6 +257,44 @@ export default function UserProfile() {
                   {errors.phoneNumber && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.phoneNumber.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* social media */}
+            <div className="md:col-span-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <FacebookIcon className="w-5 h-5 text-blue-500" />
+                    <Input
+                      {...register("facebookUrl")}
+                      placeholder="Facebook Profile URL"
+                      type="url"
+                      className="w-full"
+                    />
+                  </div>
+                  {errors.facebookUrl && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.facebookUrl.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <InstagramIcon className="w-5 h-5 text-pink-500" />
+                    <Input
+                      {...register("instagramUrl")}
+                      placeholder="Instagram Profile URL"
+                      type="url"
+                      className="w-full"
+                    />
+                  </div>
+                  {errors.instagramUrl && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.instagramUrl.message}
                     </p>
                   )}
                 </div>

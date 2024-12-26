@@ -7,6 +7,8 @@ export interface BaseProfile {
   email?: string; // New field
   phoneNumber?: string;
   headerImage?: string;
+  facebookUrl?: string; // New field
+  instagramUrl?: string; // New field
 }
 
 export interface BandProfile extends BaseProfile {
@@ -38,6 +40,8 @@ export interface ProfileResponse {
   email?: string; // New field
   phoneNumber?: string; // New field
   headerImage?: string; // Add this line
+  facebookUrl?: string; // New field
+  instagramUrl?: string; // New field
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -55,4 +59,6 @@ export interface ProfileFormData {
   email?: string; // New field
   phoneNumber?: string; // New field
   headerImage?: string; // Add this line
+  facebookUrl?: string; // New field
+  instagramUrl?: string; // New field
 }

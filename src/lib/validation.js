@@ -7,6 +7,9 @@ const commonFields = {
     .regex(/^\+?[\d\s-()]{10,}$/, "Invalid phone number format")
     .optional(),
   headerImage: z.string().url("Invalid URL format").optional(),
+  // Add social media fields to common fields
+  facebookUrl: z.string().url("Invalid Facebook URL").optional(),
+  instagramUrl: z.string().url("Invalid Instagram URL").optional(),
 };
 
 export const profileSchema = z.object({

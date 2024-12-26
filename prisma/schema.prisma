@@ -36,6 +36,8 @@ model Band {
   headerImage  String?
   email        String? // New field
   phoneNumber  String? // New field
+  facebookUrl  String? // New field
+  instagramUrl String? // New field
   imageUrl     String? // Add this line for imageUrl (band profile picture)
   userId       String   @unique
   user         User     @relation("UserBand", fields: [userId], references: [id])
@@ -55,6 +57,8 @@ model GigProvider {
   email        String? // New field
   phoneNumber  String? // New field
   imageUrl     String? // Add this line for imageUrl (gig provider profile picture)
+  facebookUrl  String? // New field
+  instagramUrl String? // New field
   userId       String   @unique
   user         User     @relation("UserGigProvider", fields: [userId], references: [id])
   createdAt    DateTime @default(now())

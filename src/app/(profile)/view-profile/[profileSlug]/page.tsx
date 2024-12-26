@@ -6,6 +6,7 @@ import Image from "next/image";
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import MotionImageAll from "@/components/MotionImageAll";
 import VideoDisplay from "@/components/VideoDisplay";
+import { FacebookIcon, InstagramIcon } from "@/components/icons/social-icons";
 
 interface Profile {
   name: string;
@@ -23,6 +24,8 @@ interface Profile {
     email?: string;
     phoneNumber?: string;
     headerImage?: string;
+    facebookUrl?: string;
+    instagramUrl?: string;
   };
 }
 
@@ -253,6 +256,51 @@ export default function ProfileDisplay() {
                         </a>
                       </p>
                     )}
+                  </div>
+                </MotionWrapperDelay>
+              )}
+
+              {/* Social Media Links */}
+              {(profile.profile.facebookUrl ||
+                profile.profile.instagramUrl) && (
+                <MotionWrapperDelay
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.8, delay: 0.8 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 100 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                >
+                  <div className="backdrop-blur-lg bg-indigo-900/20 p-6 rounded-2xl border border-white/20 hover:shadow-2xl hover:bg-gradient-to-r from-red-600 to-purple-600 hover:text-white transition-all duration-300">
+                    <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3">
+                      Social Media
+                    </h3>
+                    <div className="space-y-3">
+                      {profile.profile.facebookUrl && (
+                        <a
+                          href={profile.profile.facebookUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors duration-300"
+                        >
+                          <FacebookIcon className="w-5 h-5 text-blue-500" />
+                          <span>Facebook Profile</span>
+                        </a>
+                      )}
+                      {profile.profile.instagramUrl && (
+                        <a
+                          href={profile.profile.instagramUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-2 text-gray-300 hover:text-pink-400 transition-colors duration-300"
+                        >
+                          <InstagramIcon className="w-5 h-5 text-pink-500" />
+                          <span>Instagram Profile</span>
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </MotionWrapperDelay>
               )}
