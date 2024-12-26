@@ -72,6 +72,7 @@ export default function UserProfile() {
           if (existingProfile.profileType === "band") {
             setValue("genre", existingProfile.profile.genre || "");
             setValue("videoUrl", existingProfile.profile.videoUrl || "");
+            setValue("bandMembers", existingProfile.profile.bandMembers || []);
           } else {
             setValue("services", existingProfile.profile.services || "");
           }
@@ -164,7 +165,6 @@ export default function UserProfile() {
                 </p>
               )}
             </div>
-
             <div>
               <Input
                 {...register("imageUrl")}
@@ -190,7 +190,6 @@ export default function UserProfile() {
                 </p>
               )}
             </div>
-
             <div>
               <Input
                 {...register("location")}
@@ -203,7 +202,6 @@ export default function UserProfile() {
                 </p>
               )}
             </div>
-
             <div className="md:col-span-2">
               <Textarea
                 {...register("description")}
@@ -230,7 +228,6 @@ export default function UserProfile() {
                 </p>
               )}
             </div>
-
             {/* new added contact fields */}
             {/* Contact Information */}
             <div className="md:col-span-2">
@@ -262,7 +259,6 @@ export default function UserProfile() {
                 </div>
               </div>
             </div>
-
             {/* social media */}
             <div className="md:col-span-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -300,6 +296,29 @@ export default function UserProfile() {
                 </div>
               </div>
             </div>
+
+            {/* Band memebers */}
+
+            {profileType === "band" && (
+              <div className="md:col-span-2">
+                <h3 className="text-lg font-semibold mb-2">Band Members</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[...Array(7)].map((_, index) => (
+                    <Input
+                      key={index}
+                      {...register(`bandMembers.${index}`)}
+                      placeholder={`Band Member ${index + 1}`}
+                      className="w-full"
+                    />
+                  ))}
+                </div>
+                {errors.bandMembers && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.bandMembers.message}
+                  </p>
+                )}
+              </div>
+            )}
 
             {profileType === "band" ? (
               <>

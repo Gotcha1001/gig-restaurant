@@ -26,6 +26,7 @@ interface Profile {
     headerImage?: string;
     facebookUrl?: string;
     instagramUrl?: string;
+    bandMembers: string[];
   };
 }
 
@@ -381,6 +382,37 @@ export default function ProfileDisplay() {
                   </div>
                 </MotionWrapperDelay>
               )}
+
+              {profile.profileType === "band" &&
+                profile.profile.bandMembers &&
+                profile.profile.bandMembers.length > 0 && (
+                  <MotionWrapperDelay
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.8, delay: 0.8 }}
+                    variants={{
+                      hidden: { opacity: 0, y: 100 },
+                      visible: { opacity: 1, y: 0 },
+                    }}
+                  >
+                    <div className="backdrop-blur-lg bg-indigo-900/20 p-6 rounded-2xl border border-white/20 hover:shadow-2xl hover:bg-gradient-to-r from-red-600 to-purple-600 hover:text-white transition-all duration-300">
+                      <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3">
+                        Band Members
+                      </h3>
+                      <div className="space-y-2">
+                        {profile.profile.bandMembers.map(
+                          (member, index) =>
+                            member && (
+                              <p key={index} className="text-gray-300">
+                                {member}
+                              </p>
+                            )
+                        )}
+                      </div>
+                    </div>
+                  </MotionWrapperDelay>
+                )}
             </div>
           </div>
         </div>

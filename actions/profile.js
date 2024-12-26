@@ -17,6 +17,7 @@ export async function createUserProfile({
   headerImage, // Add this
   facebookUrl, // New field
   instagramUrl, // New field
+  bandMembers, // Add this
 }) {
   try {
     const { userId: clerkUserId } = await auth();
@@ -64,6 +65,7 @@ export async function createUserProfile({
           headerImage, // Add this
           facebookUrl, // New field
           instagramUrl, // New field
+          bandMembers, // Add this
         },
         create: {
           name,
@@ -78,6 +80,7 @@ export async function createUserProfile({
           headerImage, // Add this
           facebookUrl, // New field
           instagramUrl, // New field
+          bandMembers, // Add this
           user: {
             connect: {
               id: user.id,

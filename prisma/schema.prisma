@@ -39,6 +39,7 @@ model Band {
   facebookUrl  String? // New field
   instagramUrl String? // New field
   imageUrl     String? // Add this line for imageUrl (band profile picture)
+  bandMembers  String[] // New field
   userId       String   @unique
   user         User     @relation("UserBand", fields: [userId], references: [id])
   createdAt    DateTime @default(now())

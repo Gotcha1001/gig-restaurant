@@ -40,6 +40,10 @@ export const profileSchema = z.object({
     .min(1, "ImageUrl Required")
     .max(200, "ImageUrl Cannot Exceed 100 Characters")
     .optional(),
+  bandMembers: z
+    .array(z.string())
+    .max(7, "Cannot have more than 7 band members")
+    .optional(),
   ...commonFields,
 });
 
