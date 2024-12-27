@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/card";
 import { getAllGigProviders } from "../../../../actions/gigProviders";
 import Link from "next/link";
-import Image from "next/image";
 import { ProfileResponse } from "@/lib/types-profile";
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import FeatureMotionWrapper from "@/components/FeatureMotionWrapper";
@@ -36,14 +35,13 @@ const GigProvidersPage = async () => {
         {gigProviders.map((provider, index) => (
           <FeatureMotionWrapper key={provider.id} index={index}>
             <Link href={`/view-profile/${provider.userId}`}>
-              <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer h-full">
+              <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer h-full gradient-background10 ">
                 <CardHeader>
-                  <div className="relative w-full h-48 mb-4">
-                    <Image
+                  <div className="object-contain rounded-t-lg w-full h-96">
+                    <img
                       src={provider.imageUrl || "/placeholder-provider.jpg"}
                       alt={provider.name}
-                      fill
-                      className="object-cover rounded-t-lg"
+                      className="object-cover rounded-lg w-full h-full"
                     />
                   </div>
                   <CardTitle className="text-xl">{provider.name}</CardTitle>

@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/card";
 import { getAllBands } from "../../../../actions/bands";
 import Link from "next/link";
-import Image from "next/image";
 import { ProfileResponse } from "@/lib/types-profile";
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import FeatureMotionWrapper from "@/components/FeatureMotionWrapper";
@@ -38,14 +37,13 @@ const BandsPage = async () => {
         {bands.map((band, index) => (
           <FeatureMotionWrapper key={band.id} index={index}>
             <Link href={`/view-profile/${band.userId}`}>
-              <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer h-full">
+              <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer h-full gradient-background10 ">
                 <CardHeader>
-                  <div className="relative w-full h-48 mb-4">
-                    <Image
+                  <div className="object-contain rounded-t-lg w-full h-96">
+                    <img
                       src={band.imageUrl || "/placeholder-band.jpg"}
                       alt={band.name}
-                      fill
-                      className="object-cover rounded-t-lg"
+                      className="object-cover rounded-lg w-full h-full object-center"
                     />
                   </div>
                   <CardTitle className="text-xl">{band.name}</CardTitle>
