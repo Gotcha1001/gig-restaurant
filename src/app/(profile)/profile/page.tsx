@@ -46,35 +46,32 @@ export default function UserProfile() {
     createUserProfile as (data: Profile) => Promise<ProfileResponse>
   );
 
-  // Fetch existing profile data
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const existingProfile = await getUserProfile();
-        console.log("Fetched profile:", existingProfile);
-
         if (existingProfile && existingProfile.profile) {
           setIsUpdate(true);
           setProfileType(existingProfile.profileType as ProfileType);
 
-          // Pre-populate form fields with profile data
+          // Common fields
           setValue("name", existingProfile.name || "");
           setValue("imageUrl", existingProfile.imageUrl || "");
           setValue("location", existingProfile.profile.location || "");
           setValue("description", existingProfile.profile.description || "");
           setValue("website", existingProfile.profile.website || "");
-          setValue("email", existingProfile.profile.email || ""); // add this
-          setValue("phoneNumber", existingProfile.profile.phoneNumber || ""); // add this
+          setValue("email", existingProfile.profile.email || "");
+          setValue("phoneNumber", existingProfile.profile.phoneNumber || "");
           setValue("headerImage", existingProfile.profile.headerImage || "");
-          setValue("facebookUrl", existingProfile.profile.facebookUrl || ""); // New field
-          setValue("instagramUrl", existingProfile.profile.instagramUrl || ""); // New field
+          setValue("facebookUrl", existingProfile.profile.facebookUrl || "");
+          setValue("instagramUrl", existingProfile.profile.instagramUrl || "");
 
+          // Type-specific fields
           if (existingProfile.profileType === "band") {
             setValue("genre", existingProfile.profile.genre || "");
             setValue("videoUrl", existingProfile.profile.videoUrl || "");
             setValue("bandMembers", existingProfile.profile.bandMembers || []);
-
-            setValue("photos", existingProfile.profile.photos || []); // Prepopulate photos for band
+            setValue("photos", existingProfile.profile.photos || []);
           } else {
             setValue("services", existingProfile.profile.services || "");
           }

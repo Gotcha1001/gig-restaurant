@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { getUserProfileById } from "../../../../../actions/profile";
 import { useParams } from "next/navigation";
-import Image from "next/image";
+
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import MotionImageAll from "@/components/MotionImageAll";
 import VideoDisplay from "@/components/VideoDisplay";
@@ -136,15 +136,11 @@ export default function ProfileDisplay() {
             }}
           >
             <div className="h-64 rounded-3xl overflow-hidden relative">
-              <div className="absolute inset-0">
-                <Image
-                  src={profile.profile.headerImage || "/bg.jpg"} // Use the headerImage if available, fallback to default
-                  alt="Header image"
-                  fill
-                  className="object-cover object-center rounded-3xl"
-                  priority
-                />
-              </div>
+              <img
+                src={profile.profile.headerImage || "/bg.jpg"} // Use the headerImage if available, fallback to default
+                alt="Header image"
+                className="w-full h-full object-cover object-center rounded-3xl"
+              />
             </div>
           </MotionWrapperDelay>
 
@@ -175,6 +171,40 @@ export default function ProfileDisplay() {
               {profile.profileType === "band" ? "Band" : "Gig Provider"}
             </span>
           </div>
+
+          {profile.profileType === "gigProvider" && (
+            <>
+              <MotionWrapperDelay
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                variants={{
+                  hidden: { opacity: 0, y: 100 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+              >
+                <div className="text-center mb-12 p-6 backdrop-blur-lg bg-indigo-900/20 border border-white/20 hover:shadow-2xl hover:bg-gradient-to-r from-red-600 to-purple-600 hover:text-white transition-all duration-300 rounded-3xl shadow-lg">
+                  <h3 className="text-3xl text-white font-semibold mb-4">
+                    Live Music Every Week
+                  </h3>
+                  <p className="text-lg text-gray-100 mb-6">
+                    We provide live entertainment throughout the week. Contact
+                    us to secure your bands performance slot and be part of our
+                    vibrant music scene.
+                  </p>
+                  {profile.profile.email && (
+                    <a
+                      href={`mailto:${profile.profile.email}`}
+                      className="inline-block px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white text-lg font-semibold hover:opacity-90 transition-opacity"
+                    >
+                      Contact For Booking
+                    </a>
+                  )}
+                </div>
+              </MotionWrapperDelay>
+            </>
+          )}
 
           {/* Location */}
           {profile.profile.location && (

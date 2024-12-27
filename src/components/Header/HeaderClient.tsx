@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,20 +8,12 @@ import MotionWrapperDelay from "../MotionWrapperDelay";
 import { Button } from "../ui/button";
 import UserMenu from "../UserMenu";
 import UserLoading from "../user-loading";
-import { useRouter } from "next/navigation";
 
 const HeaderClient = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isLoaded } = useUser();
-  const router = useRouter();
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-
-  useEffect(() => {
-    if (user) {
-      router.push("/");
-    }
-  }, [user, router]);
 
   return (
     <MotionWrapperDelay
