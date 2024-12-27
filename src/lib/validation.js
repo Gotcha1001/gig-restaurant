@@ -44,6 +44,10 @@ export const profileSchema = z.object({
     .array(z.string())
     .max(7, "Cannot have more than 7 band members")
     .optional(),
+  photos: z
+    .array(z.string().url("Invalid photo URL"))
+    .max(7, "Cannot have more than 7 photos")
+    .optional(),
   ...commonFields,
 });
 

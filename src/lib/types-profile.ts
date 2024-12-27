@@ -17,6 +17,7 @@ export interface BandProfile extends BaseProfile {
   videoUrl?: string;
   services?: undefined;
   bandMembers?: string[]; // New field
+  photos?: string[]; // Add this line only
 }
 
 export interface GigProviderProfile extends BaseProfile {
@@ -44,6 +45,7 @@ export interface ProfileResponse {
   facebookUrl?: string; // New field
   instagramUrl?: string; // New field
   bandMembers?: string[]; // New field
+  photos?: string[]; // Add this line only
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -64,4 +66,5 @@ export interface ProfileFormData {
   facebookUrl?: string; // New field
   instagramUrl?: string; // New field
   bandMembers?: string[]; // New field
+  photos?: string[]; // Add this line only
 }

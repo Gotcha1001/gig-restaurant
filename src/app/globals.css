@@ -475,3 +475,25 @@ html {
     background-position: 0% 0%; /* Back to top left */
   }
 }
+
+.gradient-background9 {
+  background: linear-gradient(
+    300deg,
+    rgba(0, 0, 0, 0.9),
+    rgba(0, 0, 0, 0.9),
+    rgba(54, 2, 55, 0.3)
+  );
+  background-size: 180% 180%;
+  animation: gradient-animation 6s ease infinite;
+}
+
+.gradient-background10 {
+  background: linear-gradient(
+    300deg,
+    rgba(0, 0, 0, 0.9),
+    rgba(0, 0, 0, 0.9),
+    rgba(11, 2, 59, 0.2)
+  );
+  background-size: 180% 180%;
+  animation: gradient-animation 6s ease infinite;
+}

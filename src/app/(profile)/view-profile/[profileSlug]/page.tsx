@@ -7,6 +7,7 @@ import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import MotionImageAll from "@/components/MotionImageAll";
 import VideoDisplay from "@/components/VideoDisplay";
 import { FacebookIcon, InstagramIcon } from "@/components/icons/social-icons";
+import BandPhotosCarousel from "@/components/BandPhotosCarousel";
 
 interface Profile {
   name: string;
@@ -27,6 +28,7 @@ interface Profile {
     facebookUrl?: string;
     instagramUrl?: string;
     bandMembers: string[];
+    photos: string[];
   };
 }
 
@@ -102,7 +104,7 @@ export default function ProfileDisplay() {
     );
 
   return (
-    <div className="min-h-screen gradient-background2 py-12 px-4 sm:px-6 lg:px-8 rounded-lg flex justify-center items-center">
+    <div className="min-h-screen gradient-background9  py-12 px-4 sm:px-6 lg:px-8 rounded-lg flex justify-center items-center">
       <div className="w-full max-w-4xl mx-auto">
         <MotionWrapperDelay
           initial="hidden"
@@ -160,8 +162,13 @@ export default function ProfileDisplay() {
           </MotionImageAll>
         </div>
 
+        {/* Carousel section  */}
+        {profile.profile.photos && profile.profile.photos.length > 0 && (
+          <BandPhotosCarousel photos={profile.profile.photos} />
+        )}
+
         {/* Profile Content */}
-        <div className="backdrop-blur-lg bg-white/20 rounded-3xl border border-white/20 p-8 shadow-2xl">
+        <div className="backdrop-blur-lg gradient-background10  rounded-3xl border  p-8 shadow-2xl">
           {/* Profile Type Badge */}
           <div className="text-center mb-12">
             <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/10 text-blue-300">
