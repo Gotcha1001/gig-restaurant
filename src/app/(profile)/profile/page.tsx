@@ -50,6 +50,8 @@ export default function UserProfile() {
     const fetchProfile = async () => {
       try {
         const existingProfile = await getUserProfile();
+        console.log("Fetched profile:", existingProfile); // Add this debug log
+
         if (existingProfile && existingProfile.profile) {
           setIsUpdate(true);
           setProfileType(existingProfile.profileType as ProfileType);
@@ -65,15 +67,20 @@ export default function UserProfile() {
           setValue("headerImage", existingProfile.profile.headerImage || "");
           setValue("facebookUrl", existingProfile.profile.facebookUrl || "");
           setValue("instagramUrl", existingProfile.profile.instagramUrl || "");
-          setValue("photos", existingProfile.profile.photos || []); // Moved outside type-specific fields
 
           // Type-specific fields
-          if (existingProfile.profileType === "band") {
+          if (existingProfile.profileType === "gigProvider") {
+            console.log(
+              "Setting gig provider fields:",
+              existingProfile.profile
+            ); // Add this debug log
+            setValue("services", existingProfile.profile.services || "");
+            setValue("photos", existingProfile.profile.photos || []);
+          } else if (existingProfile.profileType === "band") {
             setValue("genre", existingProfile.profile.genre || "");
             setValue("videoUrl", existingProfile.profile.videoUrl || "");
             setValue("bandMembers", existingProfile.profile.bandMembers || []);
-          } else if (existingProfile.profileType === "gigProvider") {
-            setValue("services", existingProfile.profile.services || "");
+            setValue("photos", existingProfile.profile.photos || []);
           }
         }
       } catch (error) {
@@ -120,8 +127,11 @@ export default function UserProfile() {
   };
 
   useEffect(() => {
-    reset();
-  }, [profileType, reset]);
+    // Only reset if it's not an update
+    if (!isUpdate) {
+      reset();
+    }
+  }, [profileType, reset, isUpdate]);
 
   return (
     <div className="relative min-h-screen flex justify-center items-center py-8">
