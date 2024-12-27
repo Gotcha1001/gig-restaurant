@@ -65,14 +65,14 @@ export default function UserProfile() {
           setValue("headerImage", existingProfile.profile.headerImage || "");
           setValue("facebookUrl", existingProfile.profile.facebookUrl || "");
           setValue("instagramUrl", existingProfile.profile.instagramUrl || "");
+          setValue("photos", existingProfile.profile.photos || []); // Moved outside type-specific fields
 
           // Type-specific fields
           if (existingProfile.profileType === "band") {
             setValue("genre", existingProfile.profile.genre || "");
             setValue("videoUrl", existingProfile.profile.videoUrl || "");
             setValue("bandMembers", existingProfile.profile.bandMembers || []);
-            setValue("photos", existingProfile.profile.photos || []);
-          } else {
+          } else if (existingProfile.profileType === "gigProvider") {
             setValue("services", existingProfile.profile.services || "");
           }
         }
