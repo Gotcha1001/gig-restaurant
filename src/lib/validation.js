@@ -70,5 +70,9 @@ export const gigProviderSchema = z.object({
     .optional(),
   website: z.string().url("Invalid URL Format").optional(),
   imageUrl: z.string().url("Invalid URL Format").optional(),
+  photos: z
+    .array(z.string().url("Invalid photo URL"))
+    .max(7, "Cannot have more than 7 photos")
+    .optional(),
   ...commonFields,
 });

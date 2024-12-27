@@ -106,6 +106,7 @@ export async function createUserProfile({
           headerImage, // Add this
           facebookUrl, // New field
           instagramUrl, // New field
+          photos, // Add this line only
         },
         create: {
           name,
@@ -119,6 +120,7 @@ export async function createUserProfile({
           headerImage, // Add this
           facebookUrl, // New field
           instagramUrl, // New field
+          photos, // Add this line only
           user: {
             connect: {
               id: user.id,

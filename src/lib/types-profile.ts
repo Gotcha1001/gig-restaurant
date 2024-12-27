@@ -25,6 +25,7 @@ export interface GigProviderProfile extends BaseProfile {
   services: string;
   genre?: undefined;
   videoUrl?: undefined;
+  photos?: string[]; // Add this line
 }
 
 export type Profile = BandProfile | GigProviderProfile;

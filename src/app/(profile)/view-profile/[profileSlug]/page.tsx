@@ -163,6 +163,11 @@ export default function ProfileDisplay() {
           <BandPhotosCarousel photos={profile.profile.photos} />
         )}
 
+        {/* carousel for the gig providers
+        {profile.profile.photos && profile.profile.photos.length > 0 && (
+          <BandPhotosCarousel photos={profile.profile.photos} />
+        )} */}
+
         {/* Profile Content */}
         <div className="backdrop-blur-lg gradient-background10  rounded-3xl border  p-8 shadow-2xl">
           {/* Profile Type Badge */}

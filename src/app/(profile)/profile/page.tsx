@@ -386,6 +386,28 @@ export default function UserProfile() {
             </div>
           )}
 
+          {profileType === "gigProvider" && (
+            <div className="md:col-span-2">
+              <h3 className="text-lg font-semibold mb-2">Venue Photos</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[...Array(7)].map((_, index) => (
+                  <Input
+                    key={index}
+                    {...register(`photos.${index}`)}
+                    placeholder={`Photo URL ${index + 1}`}
+                    type="url"
+                    className="w-full"
+                  />
+                ))}
+              </div>
+              {errors.photos && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.photos.message}
+                </p>
+              )}
+            </div>
+          )}
+
           <Button
             type="submit"
             disabled={loading}

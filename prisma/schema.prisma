@@ -61,6 +61,7 @@ model GigProvider {
   imageUrl     String? // Add this line for imageUrl (gig provider profile picture)
   facebookUrl  String? // New field
   instagramUrl String? // New field
+  photos       String[] // Add this line
   userId       String   @unique
   user         User     @relation("UserGigProvider", fields: [userId], references: [id])
   createdAt    DateTime @default(now())
