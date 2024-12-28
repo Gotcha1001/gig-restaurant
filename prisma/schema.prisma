@@ -8,20 +8,35 @@ datasource db {
 }
 
 model User {
-  id               String        @id @default(cuid())
-  clerkUserId      String        @unique
-  email            String        @unique
+  id               String          @id @default(cuid())
+  clerkUserId      String          @unique
+  email            String          @unique
   username         String?
   profileImages    String[] // Change from String to String[] for multiple images
   profileType      String
   name             String?
   imageUrl         String?
-  band             Band?         @relation("UserBand")
-  gigProvider      GigProvider?  @relation("UserGigProvider")
-  interactionsFrom Interaction[] @relation("InteractionFrom")
-  interactionsTo   Interaction[] @relation("InteractionTo")
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  band             Band?           @relation("UserBand")
+  gigProvider      GigProvider?    @relation("UserGigProvider")
+  interactionsFrom Interaction[]   @relation("InteractionFrom")
+  interactionsTo   Interaction[]   @relation("InteractionTo")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  SharedProfile    SharedProfile[]
+}
+
+model SharedProfile {
+  id           String   @id @default(cuid())
+  userId       String // ID of the user whose profile is shared
+  sharedBy     String // ID of the user who shared the profile
+  profileType  String // "band" or "gigProvider"
+  shareDate    DateTime @default(now())
+  shareMessage String? // Optional message when sharing
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([sharedBy])
 }
 
 model Band {

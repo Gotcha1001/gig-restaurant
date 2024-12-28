@@ -204,3 +204,119 @@ export async function getUserProfileById(userId) {
     throw error;
   }
 }
+
+export async function getSharedProfiles() {
+  try {
+    const { userId: clerkUserId } = await auth();
+    if (!clerkUserId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get the current user with their profile type
+    const currentUser = await db.user.findUnique({
+      where: { clerkUserId },
+      select: {
+        id: true,
+        profileType: true,
+      },
+    });
+
+    if (!currentUser) {
+      throw new Error("User not found");
+    }
+
+    // Find shared profiles where:
+    // 1. If current user is a band, show only gig provider profiles shared TO them
+    // 2. If current user is a gig provider, show only band profiles shared TO them
+    const sharedProfiles = await db.sharedProfile.findMany({
+      where: {
+        userId: {
+          not: currentUser.id, // Don't show their own shared profiles
+        },
+        AND: [
+          {
+            // Only show profiles shared TO the current user
+            user: {
+              profileType:
+                currentUser.profileType === "band" ? "gigProvider" : "band",
+            },
+          },
+          {
+            // Match the current user as the recipient
+            sharedBy: currentUser.id,
+          },
+        ],
+      },
+      include: {
+        user: {
+          include: {
+            band: true,
+            gigProvider: true,
+          },
+        },
+      },
+      orderBy: {
+        shareDate: "desc",
+      },
+    });
+
+    return sharedProfiles;
+  } catch (error) {
+    console.error("Error fetching shared profiles:", error);
+    throw error;
+  }
+}
+
+export async function shareProfile(userId, profileType, shareMessage) {
+  try {
+    const { userId: clerkUserId } = await auth();
+    if (!clerkUserId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get the current user
+    const currentUser = await db.user.findUnique({
+      where: { clerkUserId },
+      select: {
+        id: true,
+        profileType: true,
+      },
+    });
+
+    if (!currentUser) {
+      throw new Error("User not found");
+    }
+
+    // Get the target user
+    const targetUser = await db.user.findUnique({
+      where: { id: userId },
+      select: {
+        profileType: true,
+      },
+    });
+
+    if (!targetUser) {
+      throw new Error("Target user not found");
+    }
+
+    // Validate that we're sharing between different profile types
+    if (currentUser.profileType === targetUser.profileType) {
+      throw new Error("Cannot share profile to the same profile type");
+    }
+
+    // Create the shared profile record
+    const sharedProfile = await db.sharedProfile.create({
+      data: {
+        userId: currentUser.id, // The profile being shared (current user's profile)
+        sharedBy: userId, // The user it's being shared to (target user)
+        profileType: currentUser.profileType,
+        shareMessage,
+      },
+    });
+
+    return sharedProfile;
+  } catch (error) {
+    console.error("Error sharing profile:", error);
+    throw error;
+  }
+}

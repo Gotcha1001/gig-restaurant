@@ -15,7 +15,7 @@ const buttonVariants = cva(
         work1:
           "gradient-background2 border border-white hover:border-indigo-800 text-white shadow hover:bg-primary/90",
         work2:
-          "gradient-background2 hover:border-indigo-800 text-white shadow hover:bg-primary/90",
+          "gradient-background2 hover:border-indigo-800 text-white shadow hover:bg-primary/90 ",
         work3:
           "gradient-background1 hover:border-indigo-800 text-white shadow hover:bg-primary/90",
         work: "bg-indigo-800 text-white shadow hover:bg-primary/90",

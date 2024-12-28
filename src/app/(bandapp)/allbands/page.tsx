@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ProfileResponse } from "@/lib/types-profile";
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import FeatureMotionWrapper from "@/components/FeatureMotionWrapper";
+import ShareButton from "@/components/ShareButton";
 
 const BandsPage = async () => {
   const bands: ProfileResponse[] = await getAllBands();
@@ -58,10 +59,11 @@ const BandsPage = async () => {
                   </p>
                 </CardContent>
 
-                <CardFooter>
+                <CardFooter className="flex justify-between items-center">
                   <p className="text-sm text-muted-foreground truncate">
                     {band.description || "No description available"}
                   </p>
+                  <ShareButton userId={band.userId} profileType="band" />
                 </CardFooter>
               </Card>
             </Link>

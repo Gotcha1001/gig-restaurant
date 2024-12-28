@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import { FolderOpen, PenBox, MapPin, Menu } from "lucide-react";
+import { FolderOpen, PenBox, MapPin, Menu, Share2 } from "lucide-react";
 import MotionWrapperDelay from "../MotionWrapperDelay";
 import { Button } from "../ui/button";
 import UserMenu from "../UserMenu";
@@ -44,13 +44,13 @@ const HeaderClient = () => {
             <SignedIn>
               <Link href="/allbands">
                 <Button
-                  variant="work"
+                  variant="band"
                   className="flex items-center gap-2 group"
                 >
-                  <span className="text-white group-hover:text-black transition-colors duration-200">
+                  <span className="text-white group-hover:text-white transition-colors duration-200">
                     <FolderOpen size={18} />
                   </span>
-                  <span className="hidden md:inline text-white group-hover:text-black">
+                  <span className="hidden md:inline text-white group-hover:text-white">
                     All Bands
                   </span>
                 </Button>
@@ -61,20 +61,40 @@ const HeaderClient = () => {
                   variant="work2"
                   className="flex items-center gap-2 group"
                 >
-                  <span className="text-white group-hover:text-black transition-colors duration-200">
+                  <span className="text-white group-hover:text-indigo-500 transition-colors duration-200">
                     <MapPin size={18} />
                   </span>
-                  <span className="hidden md:inline text-white group-hover:text-black">
+                  <span className="hidden md:inline text-white group-hover:text-indigo-600">
                     Gig Providers
+                  </span>
+                </Button>
+              </Link>
+
+              {/* Shared Profiles Link */}
+              <Link href="/shared-profiles">
+                <Button
+                  variant="work3"
+                  className="flex items-center gap-2 group w-full text-left "
+                >
+                  <Share2 className="h-4 w-4" />
+                  <span className="hidden md:inline text-white group-hover:text-black">
+                    Shared Profiles
                   </span>
                 </Button>
               </Link>
 
               {isLoaded && user ? (
                 <Link href={`/view-profile/${user.id}`}>
-                  <Button variant="band" className="flex items-center gap-2">
-                    <PenBox size={18} />
-                    <span className="hidden md:inline">View Profile</span>
+                  <Button
+                    variant="band"
+                    className="flex items-center gap-2 group"
+                  >
+                    <span className="text-white group-hover:text-white transition-colors duration-200">
+                      <PenBox size={18} />
+                    </span>
+                    <span className="hidden md:inline text-white group-hover:text-white">
+                      View Profile
+                    </span>
                   </Button>
                 </Link>
               ) : (
@@ -82,9 +102,16 @@ const HeaderClient = () => {
               )}
 
               <Link href="/profile">
-                <Button variant="work2" className="flex items-center gap-2">
-                  <PenBox size={18} />
-                  <span className="hidden md:inline">Design Profile</span>
+                <Button
+                  variant="work2"
+                  className="flex items-center gap-2 group"
+                >
+                  <span className="text-white group-hover:text-indigo-500 transition-colors duration-200">
+                    <PenBox size={18} />
+                  </span>
+                  <span className="hidden md:inline text-white group-hover:text-indigo-600">
+                    Design Profile
+                  </span>
                 </Button>
               </Link>
             </SignedIn>
@@ -131,6 +158,18 @@ const HeaderClient = () => {
               <Link href="/gig-providers" onClick={toggleMenu}>
                 <Button variant="work1" className="w-full text-left mb-4">
                   Gig Providers
+                </Button>
+              </Link>
+
+              {/* Shared Profiles Link in Mobile */}
+              <Link
+                href="/shared-profiles"
+                onClick={toggleMenu}
+                className="w-full text-left mb-4"
+              >
+                <Button variant="work1" className="w-full text-left mb-4">
+                  <Share2 className="h-4 w-4" />
+                  Shared Profiles
                 </Button>
               </Link>
 

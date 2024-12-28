@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ProfileResponse } from "@/lib/types-profile";
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import FeatureMotionWrapper from "@/components/FeatureMotionWrapper";
+import ShareButton from "@/components/ShareButton";
 
 const GigProvidersPage = async () => {
   const gigProviders: ProfileResponse[] = await getAllGigProviders();
@@ -60,6 +61,10 @@ const GigProvidersPage = async () => {
                   <p className="text-sm text-muted-foreground truncate">
                     {provider.description || "No description available"}
                   </p>
+                  <ShareButton
+                    userId={provider.userId}
+                    profileType="gigProvider"
+                  />
                 </CardFooter>
               </Card>
             </Link>

@@ -1,3 +1,5 @@
+import { Band, GigProvider } from "@prisma/client";
+
 export interface BaseProfile {
   name: string;
   imageUrl: string;
@@ -68,4 +70,25 @@ export interface ProfileFormData {
   instagramUrl?: string; // New field
   bandMembers?: string[]; // New field
   photos?: string[]; // Add this line only
+}
+
+export interface SharedProfileData {
+  id: string;
+  userId: string;
+  sharedBy: string;
+  profileType: string;
+  shareDate: Date;
+  shareMessage?: string;
+  user: {
+    name: string;
+    imageUrl: string;
+    band?: Band | null; // Band type or null
+    gigProvider?: GigProvider | null; // GigProvider type or null
+  };
+}
+
+export interface ShareProfileFormData {
+  userId: string;
+  profileType: string;
+  shareMessage?: string;
 }
