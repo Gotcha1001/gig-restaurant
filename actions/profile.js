@@ -320,3 +320,42 @@ export async function shareProfile(userId, profileType, shareMessage) {
     throw error;
   }
 }
+
+export async function deleteSharedProfile(profileId) {
+  try {
+    const { userId: clerkUserId } = await auth();
+
+    if (!clerkUserId) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get the current user
+    const currentUser = await db.user.findUnique({
+      where: { clerkUserId },
+      select: { id: true },
+    });
+
+    if (!currentUser) {
+      throw new Error("User not found");
+    }
+
+    // Delete the shared profile, ensuring it belongs to the current user
+    const deletedProfile = await db.sharedProfile.deleteMany({
+      where: {
+        AND: [
+          { id: profileId },
+          { sharedBy: currentUser.id }, // Only delete if current user is the recipient
+        ],
+      },
+    });
+
+    if (deletedProfile.count === 0) {
+      throw new Error("Profile not found or unauthorized to delete");
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting shared profile:", error);
+    throw error;
+  }
+}

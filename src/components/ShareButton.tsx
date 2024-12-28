@@ -14,6 +14,7 @@ interface ShareButtonProps {
 export default function ShareButton({ userId, profileType }: ShareButtonProps) {
   const [currentUserType, setCurrentUserType] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSharing, setIsSharing] = useState(false);
 
   useEffect(() => {
     async function fetchUserType() {
@@ -40,11 +41,14 @@ export default function ShareButton({ userId, profileType }: ShareButtonProps) {
       return;
     }
 
+    setIsSharing(true);
     try {
       await shareProfile(userId, profileType);
       toast.success("Profile shared successfully!");
     } catch {
       toast.error("There was an error sharing this profile. Please try again.");
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -58,9 +62,10 @@ export default function ShareButton({ userId, profileType }: ShareButtonProps) {
       onClick={handleShare}
       variant="work"
       className="flex items-center gap-2"
+      disabled={isSharing}
     >
       <Share2 className="h-4 w-4" />
-      Share Profile
+      {isSharing ? "Sharing..." : "Share Profile"}
     </Button>
   );
 }
