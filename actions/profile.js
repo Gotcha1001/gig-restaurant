@@ -359,3 +359,52 @@ export async function deleteSharedProfile(profileId) {
     throw error;
   }
 }
+
+export async function getAllBands(searchQuery) {
+  try {
+    const bands = await db.band.findMany({
+      where: searchQuery
+        ? {
+            OR: [
+              { name: { contains: searchQuery, mode: "insensitive" } },
+              { genre: { contains: searchQuery, mode: "insensitive" } },
+              { location: { contains: searchQuery, mode: "insensitive" } },
+              { description: { contains: searchQuery, mode: "insensitive" } },
+            ],
+          }
+        : undefined,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return bands;
+  } catch (error) {
+    console.error("Error fetching bands:", error);
+    throw error;
+  }
+}
+
+// actions/gigProviders.ts
+export async function getAllGigProviders(searchQuery) {
+  try {
+    const gigProviders = await db.gigProvider.findMany({
+      where: searchQuery
+        ? {
+            OR: [
+              { name: { contains: searchQuery, mode: "insensitive" } },
+              { services: { contains: searchQuery, mode: "insensitive" } },
+              { location: { contains: searchQuery, mode: "insensitive" } },
+              { description: { contains: searchQuery, mode: "insensitive" } },
+            ],
+          }
+        : undefined,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return gigProviders;
+  } catch (error) {
+    console.error("Error fetching gig providers:", error);
+    throw error;
+  }
+}
