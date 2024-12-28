@@ -205,12 +205,16 @@ export async function getUserProfileById(userId) {
   }
 }
 
-export async function getSharedProfiles() {
+// actions/profile.js
+
+export async function getSharedProfiles(page = 1, limit = 9) {
   try {
     const { userId: clerkUserId } = await auth();
     if (!clerkUserId) {
       throw new Error("Not authenticated");
     }
+
+    const skip = (page - 1) * limit;
 
     // Get the current user with their profile type
     const currentUser = await db.user.findUnique({
@@ -225,24 +229,40 @@ export async function getSharedProfiles() {
       throw new Error("User not found");
     }
 
-    // Find shared profiles where:
-    // 1. If current user is a band, show only gig provider profiles shared TO them
-    // 2. If current user is a gig provider, show only band profiles shared TO them
-    const sharedProfiles = await db.sharedProfile.findMany({
+    // Get total count for pagination
+    const totalCount = await db.sharedProfile.count({
       where: {
         userId: {
-          not: currentUser.id, // Don't show their own shared profiles
+          not: currentUser.id,
         },
         AND: [
           {
-            // Only show profiles shared TO the current user
             user: {
               profileType:
                 currentUser.profileType === "band" ? "gigProvider" : "band",
             },
           },
           {
-            // Match the current user as the recipient
+            sharedBy: currentUser.id,
+          },
+        ],
+      },
+    });
+
+    // Get paginated shared profiles
+    const sharedProfiles = await db.sharedProfile.findMany({
+      where: {
+        userId: {
+          not: currentUser.id,
+        },
+        AND: [
+          {
+            user: {
+              profileType:
+                currentUser.profileType === "band" ? "gigProvider" : "band",
+            },
+          },
+          {
             sharedBy: currentUser.id,
           },
         ],
@@ -258,9 +278,15 @@ export async function getSharedProfiles() {
       orderBy: {
         shareDate: "desc",
       },
+      skip,
+      take: limit,
     });
 
-    return sharedProfiles;
+    return {
+      profiles: sharedProfiles,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+    };
   } catch (error) {
     console.error("Error fetching shared profiles:", error);
     throw error;
@@ -360,24 +386,47 @@ export async function deleteSharedProfile(profileId) {
   }
 }
 
-export async function getAllBands(searchQuery) {
+export async function getAllBands(searchQuery, page = 1, limit = 9) {
   try {
-    const bands = await db.band.findMany({
-      where: searchQuery
-        ? {
-            OR: [
-              { name: { contains: searchQuery, mode: "insensitive" } },
-              { genre: { contains: searchQuery, mode: "insensitive" } },
-              { location: { contains: searchQuery, mode: "insensitive" } },
-              { description: { contains: searchQuery, mode: "insensitive" } },
-            ],
-          }
-        : undefined,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    return bands;
+    const skip = (page - 1) * limit;
+
+    const [bands, totalCount] = await Promise.all([
+      db.band.findMany({
+        where: searchQuery
+          ? {
+              OR: [
+                { name: { contains: searchQuery, mode: "insensitive" } },
+                { genre: { contains: searchQuery, mode: "insensitive" } },
+                { location: { contains: searchQuery, mode: "insensitive" } },
+                { description: { contains: searchQuery, mode: "insensitive" } },
+              ],
+            }
+          : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip,
+        take: limit,
+      }),
+      db.band.count({
+        where: searchQuery
+          ? {
+              OR: [
+                { name: { contains: searchQuery, mode: "insensitive" } },
+                { genre: { contains: searchQuery, mode: "insensitive" } },
+                { location: { contains: searchQuery, mode: "insensitive" } },
+                { description: { contains: searchQuery, mode: "insensitive" } },
+              ],
+            }
+          : undefined,
+      }),
+    ]);
+
+    return {
+      bands,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+    };
   } catch (error) {
     console.error("Error fetching bands:", error);
     throw error;
@@ -385,24 +434,47 @@ export async function getAllBands(searchQuery) {
 }
 
 // actions/gigProviders.ts
-export async function getAllGigProviders(searchQuery) {
+export async function getAllGigProviders(searchQuery, page = 1, limit = 9) {
   try {
-    const gigProviders = await db.gigProvider.findMany({
-      where: searchQuery
-        ? {
-            OR: [
-              { name: { contains: searchQuery, mode: "insensitive" } },
-              { services: { contains: searchQuery, mode: "insensitive" } },
-              { location: { contains: searchQuery, mode: "insensitive" } },
-              { description: { contains: searchQuery, mode: "insensitive" } },
-            ],
-          }
-        : undefined,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    return gigProviders;
+    const skip = (page - 1) * limit;
+
+    const [gigProviders, totalCount] = await Promise.all([
+      db.gigProvider.findMany({
+        where: searchQuery
+          ? {
+              OR: [
+                { name: { contains: searchQuery, mode: "insensitive" } },
+                { services: { contains: searchQuery, mode: "insensitive" } },
+                { location: { contains: searchQuery, mode: "insensitive" } },
+                { description: { contains: searchQuery, mode: "insensitive" } },
+              ],
+            }
+          : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip,
+        take: limit,
+      }),
+      db.gigProvider.count({
+        where: searchQuery
+          ? {
+              OR: [
+                { name: { contains: searchQuery, mode: "insensitive" } },
+                { services: { contains: searchQuery, mode: "insensitive" } },
+                { location: { contains: searchQuery, mode: "insensitive" } },
+                { description: { contains: searchQuery, mode: "insensitive" } },
+              ],
+            }
+          : undefined,
+      }),
+    ]);
+
+    return {
+      gigProviders,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+    };
   } catch (error) {
     console.error("Error fetching gig providers:", error);
     throw error;

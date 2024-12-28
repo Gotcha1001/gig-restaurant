@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import Link from "next/link";
 import { ProfileResponse } from "@/lib/types-profile";
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
@@ -18,17 +17,37 @@ import ShareButton from "@/components/ShareButton";
 import SearchBar from "@/components/SearchBar";
 import { PulseLoader } from "react-spinners";
 import { getAllGigProviders } from "../../../../actions/profile";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+interface PaginatedGigProviders {
+  gigProviders: ProfileResponse[];
+  totalPages: number;
+  currentPage: number;
+}
 
 const GigProvidersPage = () => {
-  const [gigProviders, setGigProviders] = useState<ProfileResponse[]>([]);
+  const [paginatedGigProviders, setPaginatedGigProviders] =
+    useState<PaginatedGigProviders>({
+      gigProviders: [],
+      totalPages: 1,
+      currentPage: 1,
+    });
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchGigProviders = async (query?: string) => {
+  const fetchGigProviders = async (query?: string, page: number = 1) => {
     setLoading(true);
     try {
-      const data = await getAllGigProviders(query);
-      setGigProviders(data);
+      const data = await getAllGigProviders(query, page);
+      setPaginatedGigProviders(data);
     } catch (error) {
       console.error("Error fetching gig providers:", error);
     } finally {
@@ -38,11 +57,16 @@ const GigProvidersPage = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      fetchGigProviders(searchQuery);
+      fetchGigProviders(searchQuery, currentPage);
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
+  }, [searchQuery, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="container mx-auto py-4">
@@ -62,11 +86,25 @@ const GigProvidersPage = () => {
       </MotionWrapperDelay>
 
       <div className="max-w-md mx-auto my-8">
-        <SearchBar
-          placeholder="Search gig providers by name, services, or location..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        <MotionWrapperDelay
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          variants={{
+            hidden: { opacity: 0, x: 100 },
+            visible: { opacity: 1, x: 0 },
+          }}
+        >
+          <SearchBar
+            placeholder="Search gig providers by name, services, or location..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+        </MotionWrapperDelay>
       </div>
 
       {loading ? (
@@ -76,7 +114,7 @@ const GigProvidersPage = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {gigProviders.map((provider, index) => (
+            {paginatedGigProviders.gigProviders.map((provider, index) => (
               <FeatureMotionWrapper key={provider.id} index={index}>
                 <Link href={`/view-profile/${provider.userId}`}>
                   <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer h-full gradient-background10">
@@ -115,11 +153,57 @@ const GigProvidersPage = () => {
             ))}
           </div>
 
-          {gigProviders.length === 0 && (
+          {paginatedGigProviders.gigProviders.length === 0 ? (
             <div className="text-center text-muted-foreground py-12">
               {searchQuery
                 ? "No gig providers found matching your search."
                 : "No gig providers found. Be the first to create a gig provider profile!"}
+            </div>
+          ) : (
+            <div className="mt-8 flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className={
+                        currentPage === 1
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+
+                  {Array.from(
+                    { length: paginatedGigProviders.totalPages },
+                    (_, i) => i + 1
+                  ).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(page)}
+                        className={`cursor-pointer ${
+                          currentPage === page
+                            ? "bg-primary text-primary-foreground"
+                            : ""
+                        }`}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className={
+                        currentPage === paginatedGigProviders.totalPages
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           )}
         </>
