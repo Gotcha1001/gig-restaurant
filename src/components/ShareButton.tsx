@@ -56,7 +56,7 @@ export default function ShareButton({ userId, profileType }: ShareButtonProps) {
   return (
     <Button
       onClick={handleShare}
-      variant="outline"
+      variant="work"
       className="flex items-center gap-2"
     >
       <Share2 className="h-4 w-4" />

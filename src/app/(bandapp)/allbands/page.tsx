@@ -63,7 +63,9 @@ const BandsPage = async () => {
                   <p className="text-sm text-muted-foreground truncate">
                     {band.description || "No description available"}
                   </p>
-                  <ShareButton userId={band.userId} profileType="band" />
+                  <div className="ml-3">
+                    <ShareButton userId={band.userId} profileType="band" />
+                  </div>
                 </CardFooter>
               </Card>
             </Link>

@@ -61,10 +61,12 @@ const GigProvidersPage = async () => {
                   <p className="text-sm text-muted-foreground truncate">
                     {provider.description || "No description available"}
                   </p>
-                  <ShareButton
-                    userId={provider.userId}
-                    profileType="gigProvider"
-                  />
+                  <div className="ml-3">
+                    <ShareButton
+                      userId={provider.userId}
+                      profileType="gigProvider"
+                    />
+                  </div>
                 </CardFooter>
               </Card>
             </Link>

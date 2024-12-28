@@ -71,28 +71,30 @@ const HeaderClient = () => {
               </Link>
 
               {/* Shared Profiles Link */}
-              <Link href="/shared-profiles">
-                <Button
-                  variant="work3"
-                  className="flex items-center gap-2 group w-full text-left "
-                >
-                  <Share2 className="h-4 w-4" />
-                  <span className="hidden md:inline text-white group-hover:text-black">
-                    Shared Profiles
-                  </span>
-                </Button>
-              </Link>
+              <div className="hidden md:flex items-center gap-4">
+                <Link href="/shared-profiles">
+                  <Button
+                    variant="band"
+                    className="flex items-center gap-2 group w-full text-left"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    <span className="hidden md:inline text-white group-hover:text-white">
+                      Shared Profiles
+                    </span>
+                  </Button>
+                </Link>
+              </div>
 
               {isLoaded && user ? (
                 <Link href={`/view-profile/${user.id}`}>
                   <Button
-                    variant="band"
+                    variant="work2"
                     className="flex items-center gap-2 group"
                   >
-                    <span className="text-white group-hover:text-white transition-colors duration-200">
+                    <span className="text-white group-hover:text-indigo-500 transition-colors duration-200">
                       <PenBox size={18} />
                     </span>
-                    <span className="hidden md:inline text-white group-hover:text-white">
+                    <span className="hidden md:inline text-white group-hover:text-indigo-500">
                       View Profile
                     </span>
                   </Button>
@@ -103,13 +105,13 @@ const HeaderClient = () => {
 
               <Link href="/profile">
                 <Button
-                  variant="work2"
+                  variant="band"
                   className="flex items-center gap-2 group"
                 >
-                  <span className="text-white group-hover:text-indigo-500 transition-colors duration-200">
+                  <span className="text-white group-hover:text-white transition-colors duration-200">
                     <PenBox size={18} />
                   </span>
-                  <span className="hidden md:inline text-white group-hover:text-indigo-600">
+                  <span className="hidden md:inline text-white group-hover:text-white">
                     Design Profile
                   </span>
                 </Button>
@@ -148,7 +150,7 @@ const HeaderClient = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden bg-black text-white px-4 py-6 absolute top-full left-0 w-full z-10">
+          <div className="md:hidden bg-black text-white px-4 py-6 absolute top-full left-0 w-full z-50">
             <SignedIn>
               <Link href="/allbands" onClick={toggleMenu}>
                 <Button variant="band" className="w-full text-left mb-4">
@@ -167,7 +169,7 @@ const HeaderClient = () => {
                 onClick={toggleMenu}
                 className="w-full text-left mb-4"
               >
-                <Button variant="work1" className="w-full text-left mb-4">
+                <Button variant="band" className="w-full text-left mb-4">
                   <Share2 className="h-4 w-4" />
                   Shared Profiles
                 </Button>
@@ -175,7 +177,7 @@ const HeaderClient = () => {
 
               {isLoaded && user ? (
                 <Link href={`/view-profile/${user.id}`} onClick={toggleMenu}>
-                  <Button variant="band" className="w-full text-left mb-4">
+                  <Button variant="work1" className="w-full text-left mb-4">
                     View Profile
                   </Button>
                 </Link>
@@ -184,7 +186,7 @@ const HeaderClient = () => {
               )}
 
               <Link href="/profile" onClick={toggleMenu}>
-                <Button variant="work1" className="w-full text-left">
+                <Button variant="band" className="w-full text-left">
                   Design Profile
                 </Button>
               </Link>
