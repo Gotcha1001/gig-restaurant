@@ -119,14 +119,25 @@ export default function SharedProfilesPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedProfiles.profiles.map((profile, index) => (
           <FeatureMotionWrapper key={profile.id} index={index}>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow opacity-80">
               <CardHeader>
                 <div className="flex items-center gap-4">
-                  <img
-                    src={profile.user.imageUrl || "/placeholder.jpg"}
-                    alt={profile.user.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
+                  <MotionWrapperDelay
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.8, delay: 0.8 }}
+                    variants={{
+                      hidden: { opacity: 0, x: 100 },
+                      visible: { opacity: 1, x: 0 },
+                    }}
+                  >
+                    <img
+                      src={profile.user.imageUrl || "/placeholder.jpg"}
+                      alt={profile.user.name}
+                      className="w-16 h-16 rounded-full object-cover"
+                    />
+                  </MotionWrapperDelay>
                   <div>
                     <h3 className="text-lg font-semibold">
                       {profile.user.name}
