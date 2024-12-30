@@ -25,6 +25,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { parseLocationName } from "@/lib/locationUtils";
 
 interface PaginatedBands {
   bands: ProfileResponse[];
@@ -132,7 +133,7 @@ const BandsPage = () => {
                         Genre: {band.genre}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        Location: {band.location}
+                        Location: {parseLocationName(band.location)}
                       </p>
                     </CardContent>
                     <CardFooter className="flex justify-between items-center">

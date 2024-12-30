@@ -17,6 +17,7 @@ import type {
   ProfileFormData,
 } from "@/lib/types-profile";
 import { FacebookIcon, InstagramIcon } from "@/components/icons/social-icons";
+import LocationPicker from "@/components/LocationPicker";
 
 type ProfileType = "band" | "gigProvider";
 
@@ -33,6 +34,7 @@ export default function UserProfile() {
     formState: { errors },
     reset,
     setValue,
+    watch,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(schema),
   });
@@ -199,11 +201,14 @@ export default function UserProfile() {
                 </p>
               )}
             </div>
+
+            {/* // Inside your form JSX, replace the existing location input: */}
             <div>
-              <Input
-                {...register("location")}
-                placeholder="Location"
-                className="w-full"
+              <LocationPicker
+                value={watch("location")}
+                onChange={(location: string) => {
+                  setValue("location", location);
+                }}
               />
               {errors.location && (
                 <p className="text-red-500 text-sm mt-1">
@@ -211,6 +216,7 @@ export default function UserProfile() {
                 </p>
               )}
             </div>
+
             <div className="md:col-span-2">
               <Textarea
                 {...register("description")}
@@ -305,9 +311,7 @@ export default function UserProfile() {
                 </div>
               </div>
             </div>
-
             {/* Band memebers */}
-
             {profileType === "band" && (
               <div className="md:col-span-2">
                 <h3 className="text-lg font-semibold mb-2">Band Members</h3>
@@ -328,7 +332,6 @@ export default function UserProfile() {
                 )}
               </div>
             )}
-
             {profileType === "band" ? (
               <>
                 <div>

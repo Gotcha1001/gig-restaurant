@@ -10,6 +10,9 @@ const commonFields = {
   // Add social media fields to common fields
   facebookUrl: z.string().url("Invalid Facebook URL").optional(),
   instagramUrl: z.string().url("Invalid Instagram URL").optional(),
+  location: z.string().min(1, "Location Required"),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 };
 
 export const profileSchema = z.object({

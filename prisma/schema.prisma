@@ -43,7 +43,6 @@ model Band {
   id           String   @id @default(cuid())
   name         String
   genre        String
-  location     String
   description  String?
   website      String?
   videoUrl     String?
@@ -56,6 +55,9 @@ model Band {
   imageUrl     String? // Add this line for imageUrl (band profile picture)
   bandMembers  String[] // New field
   photos       String[] // Add this line only
+  location     String
+  latitude     Float?
+  longitude    Float?
   userId       String   @unique
   user         User     @relation("UserBand", fields: [userId], references: [id])
   createdAt    DateTime @default(now())
@@ -66,7 +68,6 @@ model GigProvider {
   id           String   @id @default(cuid())
   name         String
   services     String
-  location     String
   description  String?
   website      String?
   profileImage String?
@@ -77,6 +78,9 @@ model GigProvider {
   facebookUrl  String? // New field
   instagramUrl String? // New field
   photos       String[] // Add this line
+  location     String
+  latitude     Float?
+  longitude    Float?
   userId       String   @unique
   user         User     @relation("UserGigProvider", fields: [userId], references: [id])
   createdAt    DateTime @default(now())

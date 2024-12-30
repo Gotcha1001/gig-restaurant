@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 import { getUserProfileById } from "../../../../../actions/profile";
 import { useParams } from "next/navigation";
-
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import MotionImageAll from "@/components/MotionImageAll";
 import VideoDisplay from "@/components/VideoDisplay";
 import { FacebookIcon, InstagramIcon } from "@/components/icons/social-icons";
 import BandPhotosCarousel from "@/components/BandPhotosCarousel";
+import loader from "@/lib/googleMapsLoader";
+import MapDisplay from "@/components/MapDisplay";
+import { parseLocation } from "@/lib/locationUtils";
 
 interface Profile {
   name: string;
@@ -17,6 +19,8 @@ interface Profile {
     name: string;
     imageUrl: string;
     location: string;
+    latitude?: number;
+    longitude?: number;
     description?: string;
     website?: string;
     genre?: string;
@@ -32,19 +36,26 @@ interface Profile {
   };
 }
 
+declare global {
+  interface Window {
+    google: typeof google;
+  }
+}
+
 export default function ProfileDisplay() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  const { profileSlug } = useParams(); // Get the profileSlug from the route params
-  console.log("Fetched User ID:", profileSlug);
+  const { profileSlug } = useParams();
 
+  // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         if (profileSlug) {
-          const userData = await getUserProfileById(profileSlug); // Use the profileSlug here
+          const userData = await getUserProfileById(profileSlug);
           if (!userData || !userData.profile) {
             setError("Profile not found for ID " + profileSlug);
           } else {
@@ -65,7 +76,84 @@ export default function ProfileDisplay() {
     };
 
     fetchProfile();
-  }, [profileSlug]); // Run the effect when profileSlug changes
+  }, [profileSlug]);
+
+  // Initialize Google Maps
+  // Inside the second useEffect that handles map initialization
+  useEffect(() => {
+    let mounted = true;
+
+    // Add this console log to check latitude and longitude
+    console.log("Profile data:", {
+      lat: profile?.profile.latitude,
+      lng: profile?.profile.longitude,
+      mapLoaded,
+    });
+
+    if (
+      !mapLoaded &&
+      profile?.profile.latitude !== undefined &&
+      profile?.profile.longitude !== undefined
+    ) {
+      const initMap = async () => {
+        try {
+          await loader.load();
+          if (!mounted) return;
+
+          const mapDiv = document.getElementById("profile-map");
+          // Add this console log to check if map div exists
+          console.log("Map container element:", mapDiv);
+
+          if (!mapDiv) {
+            console.log("Map container not available yet");
+            return;
+          }
+
+          // Add this console log before map initialization
+          console.log("Attempting to initialize map with:", {
+            lat: profile.profile.latitude,
+            lng: profile.profile.longitude,
+          });
+
+          const map = new google.maps.Map(mapDiv, {
+            center: {
+              lat: profile.profile.latitude!,
+              lng: profile.profile.longitude!,
+            },
+            zoom: 14,
+          });
+
+          new google.maps.Marker({
+            position: {
+              lat: profile.profile.latitude!,
+              lng: profile.profile.longitude!,
+            },
+            map,
+            title: profile.profile.name,
+          });
+
+          setMapLoaded(true);
+        } catch (error) {
+          // Enhance error logging
+          console.error("Error initializing map:", error);
+          console.error("Error details:", {
+            profileExists: !!profile,
+            lat: profile?.profile.latitude,
+            lng: profile?.profile.longitude,
+          });
+          if (mounted) {
+            setError("Failed to initialize map");
+          }
+        }
+      };
+
+      initMap();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [profile, mapLoaded]);
 
   if (loading)
     return (
@@ -102,6 +190,11 @@ export default function ProfileDisplay() {
         </div>
       </div>
     );
+
+  // Add this before the return statement in ProfileDisplay
+  console.log("Profile location:", profile.profile.location);
+  const coordinates = parseLocation(profile.profile.location);
+  console.log("Parsed coordinates:", coordinates);
 
   return (
     <div className="min-h-screen gradient-background9  py-12 px-4 sm:px-6 lg:px-8 rounded-lg flex justify-center items-center">
@@ -212,24 +305,43 @@ export default function ProfileDisplay() {
           )}
 
           {/* Location */}
+          {/* Location */}
+          {/* Location */}
+          {/* Location */}
           {profile.profile.location && (
             <MotionWrapperDelay
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
               variants={{
-                hidden: { opacity: 0, x: -100 },
+                hidden: { opacity: 0, x: 100 },
                 visible: { opacity: 1, x: 0 },
               }}
             >
-              <div className="text-center mb-12 gradient-background2 mx-auto w-3/5 max-w-lg p-4 rounded-lg shadow-lg">
-                <p className="text-gray-300 flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 rounded-full bg-blue-500/30 flex items-center justify-center">
-                    📍
-                  </span>
-                  {profile.profile.location}
-                </p>
+              <div className="mb-8">
+                <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3 text-center">
+                  Location
+                </h3>
+
+                {/* Display location name */}
+                {(() => {
+                  try {
+                    const locationData = JSON.parse(profile.profile.location);
+                    return (
+                      <p className="text-center text-gray-300 mb-4">
+                        {locationData.location}
+                      </p>
+                    );
+                  } catch {
+                    return null;
+                  }
+                })()}
+
+                <MapDisplay
+                  location={profile.profile.location}
+                  name={profile.profile.name}
+                />
               </div>
             </MotionWrapperDelay>
           )}

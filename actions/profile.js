@@ -7,6 +7,8 @@ export async function createUserProfile({
   imageUrl,
   profileType,
   location,
+  latitude, // Add this
+  longitude, // Add this
   description,
   website,
   genre,
@@ -58,6 +60,8 @@ export async function createUserProfile({
           imageUrl,
           genre,
           location,
+          latitude, // Add this
+          longitude, // Add this
           description,
           website,
           videoUrl,
@@ -74,6 +78,8 @@ export async function createUserProfile({
           imageUrl,
           genre,
           location,
+          latitude, // Add this
+          longitude, // Add this
           description,
           website,
           videoUrl,
@@ -99,6 +105,8 @@ export async function createUserProfile({
           imageUrl,
           services,
           location,
+          latitude, // Add this
+          longitude, // Add this
           description,
           website,
           email, // New field
@@ -113,6 +121,8 @@ export async function createUserProfile({
           imageUrl,
           services,
           location,
+          latitude, // Add this
+          longitude, // Add this
           description,
           website,
           email, // New field
@@ -165,6 +175,9 @@ export async function getUserProfile() {
       imageUrl: user.imageUrl || "",
       profileType: user.profileType,
       profile: user.band || user.gigProvider,
+      location: user.band?.location || user.gigProvider?.location || "",
+      latitude: user.band?.latitude || user.gigProvider?.latitude || null,
+      longitude: user.band?.longitude || user.gigProvider?.longitude || null,
     };
   } catch (error) {
     console.error("Error fetching profile:", error);

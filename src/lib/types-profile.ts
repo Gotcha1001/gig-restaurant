@@ -4,6 +4,8 @@ export interface BaseProfile {
   name: string;
   imageUrl: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   description?: string;
   website?: string;
   email?: string; // New field
@@ -37,6 +39,8 @@ export interface ProfileResponse {
   name: string;
   imageUrl: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   description?: string;
   website?: string;
   genre?: string;
@@ -58,6 +62,8 @@ export interface ProfileFormData {
   name: string;
   imageUrl: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   description?: string;
   website?: string;
   genre?: string;

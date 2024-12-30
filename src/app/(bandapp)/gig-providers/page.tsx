@@ -25,6 +25,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { parseLocationName } from "@/lib/locationUtils";
 
 interface PaginatedGigProviders {
   gigProviders: ProfileResponse[];
@@ -133,7 +134,7 @@ const GigProvidersPage = () => {
                         Services: {provider.services}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        Location: {provider.location}
+                        Location: {parseLocationName(provider.location)}
                       </p>
                     </CardContent>
                     <CardFooter>
