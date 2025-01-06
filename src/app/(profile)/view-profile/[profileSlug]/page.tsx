@@ -305,9 +305,6 @@ export default function ProfileDisplay() {
           )}
 
           {/* Location */}
-          {/* Location */}
-          {/* Location */}
-          {/* Location */}
           {profile.profile.location && (
             <MotionWrapperDelay
               initial="hidden"
