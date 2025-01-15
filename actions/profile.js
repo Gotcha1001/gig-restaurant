@@ -1,6 +1,31 @@
 "use server";
 import { db } from "@/lib/prisma";
+import { audioTrackSchema } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
+
+// In your server actions file
+export async function updateAudioTracks({ audioTracks, userId }) {
+  try {
+    const { userId: clerkUserId } = await auth();
+    if (!clerkUserId) {
+      throw new Error("User is not authenticated");
+    }
+
+    const validatedData = audioTrackSchema.parse({ audioTracks });
+
+    const updatedBand = await db.band.update({
+      where: { userId },
+      data: {
+        audioTracks: validatedData.audioTracks || [],
+      },
+    });
+
+    return updatedBand;
+  } catch (error) {
+    console.error("Error updating audio tracks:", error);
+    throw error;
+  }
+}
 
 export async function createUserProfile({
   name,
@@ -21,6 +46,7 @@ export async function createUserProfile({
   instagramUrl, // New field
   bandMembers, // Add this
   photos, // Add this line only
+  audioTracks, // Add this
 }) {
   try {
     const { userId: clerkUserId } = await auth();
@@ -40,6 +66,7 @@ export async function createUserProfile({
         profileType,
         name,
         imageUrl,
+        audioFiles, // Add this
       },
       create: {
         clerkUserId,
@@ -47,6 +74,7 @@ export async function createUserProfile({
         profileType,
         name,
         imageUrl,
+        audioFiles, // Add this
       },
     });
 
@@ -72,6 +100,7 @@ export async function createUserProfile({
           instagramUrl, // New field
           bandMembers, // Add this
           photos, // Add this line only
+          audioTracks, // Add this
         },
         create: {
           name,
@@ -90,6 +119,7 @@ export async function createUserProfile({
           instagramUrl, // New field
           bandMembers, // Add this
           photos, // Add this line only
+          audioTracks, // Add this
           user: {
             connect: {
               id: user.id,
@@ -210,7 +240,11 @@ export async function getUserProfileById(userId) {
       name: user.name || "",
       imageUrl: user.imageUrl || "",
       profileType: user.profileType,
-      profile: user.band || user.gigProvider || {},
+      profile: {
+        ...(user.band || user.gigProvider || {}),
+        userId: user.id, // Database ID
+        clerkUserId: user.clerkUserId, // Add Clerk ID
+      },
     };
   } catch (error) {
     console.error("Error fetching profile:", error);

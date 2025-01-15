@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getUserProfileById } from "../../../../../actions/profile";
+import {
+  getUserProfileById,
+  updateAudioTracks,
+} from "../../../../../actions/profile";
 import { useParams } from "next/navigation";
 import MotionWrapperDelay from "@/components/MotionWrapperDelay";
 import MotionImageAll from "@/components/MotionImageAll";
@@ -10,6 +13,16 @@ import BandPhotosCarousel from "@/components/BandPhotosCarousel";
 import loader from "@/lib/googleMapsLoader";
 import MapDisplay from "@/components/MapDisplay";
 import { parseLocation } from "@/lib/locationUtils";
+import { useUser } from "@clerk/nextjs";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { audioTrackSchema } from "@/lib/validation";
+import AudioUpload from "@/components/AudioUpload";
+import AudioPlayer from "@/components/AudioPlayer";
+
+type AudioFormValues = {
+  audioTracks: string[];
+};
 
 interface Profile {
   name: string;
@@ -33,6 +46,9 @@ interface Profile {
     instagramUrl?: string;
     bandMembers: string[];
     photos: string[];
+    userId: string;
+    audioTracks?: string[];
+    clerkUserId: string;
   };
 }
 
@@ -49,6 +65,23 @@ export default function ProfileDisplay() {
   const [mapLoaded, setMapLoaded] = useState(false);
 
   const { profileSlug } = useParams();
+
+  const { user } = useUser();
+
+  console.log("Comparing IDs:", {
+    clerkUserId: user?.id,
+    profileUserId: profile?.profile.userId,
+    isOwnProfile: user?.id === profile?.profile.userId,
+  });
+
+  const isOwnProfile = user?.id === profile?.profile.clerkUserId;
+
+  // Add this debug log
+  console.log("Profile comparison:", {
+    userClerkId: user?.id,
+    profileClerkId: profile?.profile.clerkUserId,
+    isOwnProfile,
+  });
 
   // Fetch profile data
   useEffect(() => {
@@ -154,6 +187,40 @@ export default function ProfileDisplay() {
       mounted = false;
     };
   }, [profile, mapLoaded]);
+
+  // Add form setup for audio tracks
+  const form = useForm<AudioFormValues>({
+    resolver: zodResolver(audioTrackSchema),
+    defaultValues: {
+      audioTracks: profile?.profile.audioTracks || [],
+    },
+  });
+
+  // Update form values when profile data changes
+  useEffect(() => {
+    if (profile?.profile.audioTracks) {
+      form.reset({
+        audioTracks: profile.profile.audioTracks,
+      });
+    }
+  }, [profile?.profile.audioTracks, form]);
+
+  // Handle audio track updates
+  const handleAudioUpdate = async (newTracks: string[]) => {
+    try {
+      if (!profile?.profile.userId) return;
+
+      await updateAudioTracks({
+        audioTracks: newTracks,
+        userId: profile.profile.userId,
+      });
+
+      // Update the form values
+      form.setValue("audioTracks", newTracks);
+    } catch (error) {
+      console.error("Error updating audio tracks:", error);
+    }
+  };
 
   if (loading)
     return (
@@ -269,7 +336,6 @@ export default function ProfileDisplay() {
               {profile.profileType === "band" ? "Band" : "Gig Provider"}
             </span>
           </div>
-
           {profile.profileType === "gigProvider" && (
             <>
               <MotionWrapperDelay
@@ -304,6 +370,26 @@ export default function ProfileDisplay() {
             </>
           )}
 
+          {profile.profileType === "band" && (
+            <div className="col-span-1 lg:col-span-2 space-y-6">
+              <div className="backdrop-blur-lg bg-indigo-900/20 p-6 rounded-2xl border border-white/20 hover:shadow-2xl hover:bg-gradient-to-r from-red-600 to-purple-600 hover:text-white transition-all duration-300">
+                <h3 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-3">
+                  Audio Tracks
+                </h3>
+                {isOwnProfile && (
+                  <div className="mb-6">
+                    <AudioUpload
+                      onUploadComplete={handleAudioUpdate}
+                      existingTracks={form.watch("audioTracks") || []}
+                    />
+                  </div>
+                )}
+                {form.watch("audioTracks")?.length > 0 && (
+                  <AudioPlayer tracks={form.watch("audioTracks")} />
+                )}
+              </div>
+            </div>
+          )}
           {/* Location */}
           {profile.profile.location && (
             <MotionWrapperDelay
@@ -342,7 +428,6 @@ export default function ProfileDisplay() {
               </div>
             </MotionWrapperDelay>
           )}
-
           {/* Video */}
           {profile.profile.videoUrl && (
             <div className="mb-16 w-full flex justify-center">
@@ -351,7 +436,6 @@ export default function ProfileDisplay() {
               </div>
             </div>
           )}
-
           {/* Profile Information Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Column */}
