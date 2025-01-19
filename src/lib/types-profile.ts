@@ -1,6 +1,5 @@
 import { Band, GigProvider } from "@prisma/client";
 
-// Base profile with common fields
 export interface BaseProfile {
   name: string;
   imageUrl: string;
@@ -9,42 +8,33 @@ export interface BaseProfile {
   longitude?: number;
   description?: string;
   website?: string;
-  email?: string;
-  phoneNumber?: string;
-  headerImage?: string;
-  facebookUrl?: string;
-  instagramUrl?: string;
+  email?: string; // New field
+  phoneNumber?: string; // New field
+  headerImage?: string; // New field
+  facebookUrl?: string; // New field
+  instagramUrl?: string; // New field
 }
 
-// Band profile type with audioTracks as a JSON array
 export interface BandProfile extends BaseProfile {
   profileType: "band";
   genre: string;
-  services?: undefined;
-<<<<<<< HEAD
-  bandMembers?: string[]; // New field
-  audioTracks?: string[];
-=======
-  bandMembers?: string[];
-  audioTracks?: { url: string; name: string }[]; // Adjusted to match the Prisma JSON format
   videoUrl?: string;
->>>>>>> 0ab92bd7a3fc458774f0936e030608437230ab59
+  services?: undefined; // Ensures services are not used for bands
+  bandMembers?: string[]; // New field
+  audioTracks?: AudioTrack[]; // Fix: Use consistent type for audioTracks
 }
 
-// Gig provider profile type with audioTracks as a JSON array
 export interface GigProviderProfile extends BaseProfile {
   profileType: "gigProvider";
   services: string;
-  genre?: undefined;
-  videoUrl?: undefined;
-  photos?: string[];
-  audioTracks?: { url: string; name: string }[]; // Adjusted to match the Prisma JSON format
+  genre?: undefined; // Ensures genre is not used for gig providers
+  videoUrl?: undefined; // Gig providers do not have video URLs
+  photos?: string[]; // New field
+  audioTracks?: AudioTrack[]; // Fix: Use consistent type for audioTracks
 }
 
-// Unified profile type for either band or gig provider
 export type Profile = BandProfile | GigProviderProfile;
 
-// Profile response type returned from the backend
 export interface ProfileResponse {
   id: string;
   name: string;
@@ -54,27 +44,22 @@ export interface ProfileResponse {
   longitude?: number;
   description?: string;
   website?: string;
-  genre?: string;
-  services?: string;
-  videoUrl?: string;
-  email?: string;
-  phoneNumber?: string;
-  headerImage?: string;
-  facebookUrl?: string;
-  instagramUrl?: string;
-  bandMembers?: string[];
-  photos?: string[];
+  genre?: string; // Optional because it's specific to bands
+  services?: string; // Optional because it's specific to gig providers
+  videoUrl?: string; // Optional because it's specific to bands
+  email?: string; // New field
+  phoneNumber?: string; // New field
+  headerImage?: string; // New field
+  facebookUrl?: string; // New field
+  instagramUrl?: string; // New field
+  bandMembers?: string[]; // Optional because it's specific to bands
+  photos?: string[]; // Optional because it's specific to gig providers
   userId: string;
   createdAt: Date;
   updatedAt: Date;
-<<<<<<< HEAD
-  audioTracks?: string[];
-=======
-  audioTracks?: { url: string; name: string }[]; // Adjusted to match the Prisma JSON format
->>>>>>> 0ab92bd7a3fc458774f0936e030608437230ab59
+  audioTracks?: AudioTrack[]; // Fix: Use consistent type for audioTracks
 }
 
-// Form data used to create or update a profile
 export interface ProfileFormData {
   name: string;
   imageUrl: string;
@@ -83,49 +68,41 @@ export interface ProfileFormData {
   longitude?: number;
   description?: string;
   website?: string;
-  genre?: string;
-  services?: string;
-  videoUrl?: string;
-<<<<<<< HEAD
+  genre?: string; // Optional because it's specific to bands
+  services?: string; // Optional because it's specific to gig providers
+  videoUrl?: string; // Optional because it's specific to bands
   email?: string; // New field
   phoneNumber?: string; // New field
-  headerImage?: string; // Add this line
+  headerImage?: string; // New field
   facebookUrl?: string; // New field
   instagramUrl?: string; // New field
-  bandMembers?: string[]; // New field
-  photos?: string[]; // Add this line only
-  audioTracks?: string[];
-=======
-  email?: string;
-  phoneNumber?: string;
-  headerImage?: string;
-  facebookUrl?: string;
-  instagramUrl?: string;
-  bandMembers?: string[];
-  photos?: string[];
-  audioTracks?: { url: string; name: string }[]; // Adjusted to match the Prisma JSON format
->>>>>>> 0ab92bd7a3fc458774f0936e030608437230ab59
+  bandMembers?: string[]; // Optional because it's specific to bands
+  photos?: string[]; // Optional because it's specific to gig providers
+  audioTracks?: AudioTrack[]; // Fix: Use consistent type for audioTracks
 }
 
-// Shared profile data structure
 export interface SharedProfileData {
   id: string;
   userId: string;
   sharedBy: string;
-  profileType: string;
+  profileType: "band" | "gigProvider";
   shareDate: Date;
   shareMessage?: string;
   user: {
     name: string;
     imageUrl: string;
-    band?: Band | null;
-    gigProvider?: GigProvider | null;
+    band?: Band | null; // Band type or null
+    gigProvider?: GigProvider | null; // GigProvider type or null
   };
 }
 
-// Data used when sharing a profile
 export interface ShareProfileFormData {
   userId: string;
-  profileType: string;
+  profileType: "band" | "gigProvider";
   shareMessage?: string;
+}
+
+export interface AudioTrack {
+  name: string;
+  url: string;
 }
