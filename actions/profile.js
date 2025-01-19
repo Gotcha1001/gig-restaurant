@@ -1,6 +1,39 @@
 "use server";
 import { db } from "@/lib/prisma";
+import { audioTrackSchema } from "@/lib/validation";
 import { auth } from "@clerk/nextjs/server";
+
+// In your server actions file
+export async function updateAudioTracks({ audioTracks, userId }) {
+  try {
+    const { userId: clerkUserId } = await auth();
+    if (!clerkUserId) {
+      throw new Error("User is not authenticated");
+    }
+
+    // Validate the audio tracks using the schema
+    const validatedData = audioTrackSchema.parse({ audioTracks });
+
+    // Ensure track names are correctly set
+    const tracksWithNames = validatedData.audioTracks.map((track) => ({
+      name: track.name || "Untitled Track",
+      url: track.url,
+    }));
+
+    // Update the band in the database
+    const updatedBand = await db.band.update({
+      where: { userId },
+      data: {
+        audioTracks: tracksWithNames,
+      },
+    });
+
+    return updatedBand;
+  } catch (error) {
+    console.error("Error updating audio tracks:", error);
+    throw error;
+  }
+}
 
 export async function createUserProfile({
   name,
@@ -21,7 +54,11 @@ export async function createUserProfile({
   instagramUrl, // New field
   bandMembers, // Add this
   photos, // Add this line only
+<<<<<<< HEAD
   audioFiles, // Add this
+=======
+  audioTracks, // Add this
+>>>>>>> 0ab92bd7a3fc458774f0936e030608437230ab59
 }) {
   try {
     const { userId: clerkUserId } = await auth();
@@ -75,7 +112,11 @@ export async function createUserProfile({
           instagramUrl, // New field
           bandMembers, // Add this
           photos, // Add this line only
+<<<<<<< HEAD
           audioFiles, // Add this
+=======
+          audioTracks, // Add this
+>>>>>>> 0ab92bd7a3fc458774f0936e030608437230ab59
         },
         create: {
           name,
@@ -94,7 +135,11 @@ export async function createUserProfile({
           instagramUrl, // New field
           bandMembers, // Add this
           photos, // Add this line only
+<<<<<<< HEAD
           audioFiles, // Add this
+=======
+          audioTracks, // Add this
+>>>>>>> 0ab92bd7a3fc458774f0936e030608437230ab59
           user: {
             connect: {
               id: user.id,
@@ -215,7 +260,11 @@ export async function getUserProfileById(userId) {
       name: user.name || "",
       imageUrl: user.imageUrl || "",
       profileType: user.profileType,
-      profile: user.band || user.gigProvider || {},
+      profile: {
+        ...(user.band || user.gigProvider || {}),
+        userId: user.id, // Database ID
+        clerkUserId: user.clerkUserId, // Add Clerk ID
+      },
     };
   } catch (error) {
     console.error("Error fetching profile:", error);
