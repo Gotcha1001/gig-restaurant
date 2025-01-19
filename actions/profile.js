@@ -11,12 +11,20 @@ export async function updateAudioTracks({ audioTracks, userId }) {
       throw new Error("User is not authenticated");
     }
 
+    // Validate the audio tracks using the schema
     const validatedData = audioTrackSchema.parse({ audioTracks });
 
+    // Ensure track names are correctly set
+    const tracksWithNames = validatedData.audioTracks.map((track) => ({
+      name: track.name || "Untitled Track",
+      url: track.url,
+    }));
+
+    // Update the band in the database
     const updatedBand = await db.band.update({
       where: { userId },
       data: {
-        audioTracks: validatedData.audioTracks || [],
+        audioTracks: tracksWithNames,
       },
     });
 
