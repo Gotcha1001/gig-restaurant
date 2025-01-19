@@ -1,4 +1,3 @@
-// 3. Update the AudioUpload component (components/AudioUpload.tsx)
 import { useState } from "react";
 import {
   ref,
@@ -9,10 +8,16 @@ import {
 import { storage } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+
+interface AudioTrack {
+  url: string;
+  name: string;
+}
 
 interface AudioUploadProps {
-  onUploadComplete: (urls: string[]) => void;
-  existingTracks?: string[];
+  onUploadComplete: (tracks: AudioTrack[]) => void;
+  existingTracks?: AudioTrack[];
 }
 
 export default function AudioUpload({
@@ -21,21 +26,25 @@ export default function AudioUpload({
 }: AudioUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [trackName, setTrackName] = useState("");
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
+      if (!trackName.trim()) {
+        throw new Error("Please enter a track name");
+      }
+
       setUploading(true);
       setError(null);
 
       const files = e.target.files;
       if (!files) return;
 
-      // Check file count
       if (files.length + existingTracks.length > 4) {
         throw new Error("Maximum 4 audio tracks allowed");
       }
 
-      // Check file types and sizes
+      // Validate files
       for (const file of files) {
         if (!file.type.startsWith("audio/")) {
           throw new Error("Only audio files are allowed");
@@ -48,15 +57,18 @@ export default function AudioUpload({
       const uploadPromises = Array.from(files).map(async (file) => {
         const fileName = `audio-tracks/${Date.now()}-${file.name}`;
         const storageRef = ref(storage, fileName);
-
         await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(storageRef);
 
-        return downloadURL;
+        return {
+          url: downloadURL,
+          name: trackName,
+        };
       });
 
-      const urls = await Promise.all(uploadPromises);
-      onUploadComplete([...existingTracks, ...urls]);
+      const newTracks = await Promise.all(uploadPromises);
+      onUploadComplete([...existingTracks, ...newTracks]);
+      setTrackName(""); // Reset track name after successful upload
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
@@ -64,13 +76,11 @@ export default function AudioUpload({
     }
   };
 
-  const handleDelete = async (trackUrl: string) => {
+  const handleDelete = async (track: AudioTrack) => {
     try {
-      // Extract the file path from the URL
-      const fileRef = ref(storage, trackUrl);
+      const fileRef = ref(storage, track.url);
       await deleteObject(fileRef);
-
-      const newTracks = existingTracks.filter((t) => t !== trackUrl);
+      const newTracks = existingTracks.filter((t) => t.url !== track.url);
       onUploadComplete(newTracks);
     } catch {
       setError("Failed to delete track");
@@ -79,7 +89,14 @@ export default function AudioUpload({
 
   return (
     <div className="space-y-4">
-      <div>
+      <div className="space-y-2">
+        <Input
+          type="text"
+          placeholder="Enter track name"
+          value={trackName}
+          onChange={(e) => setTrackName(e.target.value)}
+          disabled={uploading}
+        />
         <input
           type="file"
           accept="audio/*"
@@ -91,12 +108,14 @@ export default function AudioUpload({
         />
         <Button
           onClick={() => document.getElementById("audio-upload")?.click()}
-          disabled={uploading || existingTracks.length >= 4}
+          disabled={
+            uploading || existingTracks.length >= 4 || !trackName.trim()
+          }
           className="w-full"
         >
-          {uploading ? "Uploading..." : "Upload Audio Tracks"}
+          {uploading ? "Uploading..." : "Upload Audio Track"}
         </Button>
-        <p className="text-sm text-gray-500 mt-2">
+        <p className="text-sm text-gray-500">
           {`${
             4 - existingTracks.length
           } slots remaining (max 4 tracks, 10MB per file)`}
@@ -112,12 +131,12 @@ export default function AudioUpload({
       {existingTracks.length > 0 && (
         <div className="space-y-2">
           <h4 className="font-medium">Uploaded Tracks:</h4>
-          {existingTracks.map((track, index) => (
+          {existingTracks.map((track) => (
             <div
-              key={track}
+              key={track.url}
               className="flex items-center justify-between p-2 bg-gray-100 rounded"
             >
-              <span>Track {index + 1}</span>
+              <span>{track.name}</span>
               <Button
                 variant="destructive"
                 size="sm"
