@@ -32,13 +32,8 @@ export interface GigProviderProfile extends BaseProfile {
   services: string;
   genre?: undefined;
   videoUrl?: undefined;
-<<<<<<< HEAD
-  photos?: string[]; // Add this line
-  audioTracks?: AudioTrack[];
-=======
   photos?: string[];
   audioTracks?: { url: string; name: string }[]; // Adjusted to match the Prisma JSON format
->>>>>>> 6de478af6a1c1ba029c6f6556a4df8a64f4cd7a3
 }
 
 // Unified profile type for either band or gig provider
@@ -113,13 +108,4 @@ export interface ShareProfileFormData {
   userId: string;
   profileType: string;
   shareMessage?: string;
-}
-<<<<<<< HEAD
-=======
-
-// Audio track data used for tracks in band and gig provider profiles
->>>>>>> 6de478af6a1c1ba029c6f6556a4df8a64f4cd7a3
-export interface AudioTrack {
-  name: string;
-  url: string;
 }
