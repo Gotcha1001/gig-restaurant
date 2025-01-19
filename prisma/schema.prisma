@@ -48,13 +48,14 @@ model Band {
   videoUrl     String?
   profileImage String?
   headerImage  String?
-  email        String? // New field
-  phoneNumber  String? // New field
-  facebookUrl  String? // New field
-  instagramUrl String? // New field
-  imageUrl     String? // Add this line for imageUrl (band profile picture)
-  bandMembers  String[] // New field
-  photos       String[] // Add this line only
+  email        String?
+  phoneNumber  String?
+  facebookUrl  String?
+  instagramUrl String?
+  imageUrl     String?
+  bandMembers  String[]
+  photos       String[]
+  audioTracks  String[]
   location     String
   latitude     Float?
   longitude    Float?

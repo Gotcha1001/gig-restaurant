@@ -51,6 +51,11 @@ export const profileSchema = z.object({
     .array(z.string().url("Invalid photo URL"))
     .max(7, "Cannot have more than 7 photos")
     .optional(),
+  audioTracks: z
+    .array(z.string().url("Invalid audio URL"))
+    .max(4, "Cannot have more than 4 audio tracks")
+    .optional(),
+
   ...commonFields,
 });
 

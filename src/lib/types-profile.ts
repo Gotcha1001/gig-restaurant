@@ -21,7 +21,7 @@ export interface BandProfile extends BaseProfile {
   videoUrl?: string;
   services?: undefined;
   bandMembers?: string[]; // New field
-  photos?: string[]; // Add this line only
+  audioTracks?: string[];
 }
 
 export interface GigProviderProfile extends BaseProfile {
@@ -56,6 +56,7 @@ export interface ProfileResponse {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  audioTracks?: string[];
 }
 
 export interface ProfileFormData {
@@ -76,6 +77,7 @@ export interface ProfileFormData {
   instagramUrl?: string; // New field
   bandMembers?: string[]; // New field
   photos?: string[]; // Add this line only
+  audioTracks?: string[];
 }
 
 export interface SharedProfileData {
