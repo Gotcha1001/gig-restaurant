@@ -90,16 +90,8 @@ export const audioTrackSchema = z.object({
   audioTracks: z
     .array(
       z.object({
-<<<<<<< HEAD
-        name: z.string().min(1, "Track name is required"),
         url: z.string().url("Invalid audio track URL"),
-=======
-        url: z.string().url("Invalid audio track URL"),
-        name: z
-          .string()
-          .min(1, "Track name is required")
-          .max(100, "Track name too long"),
->>>>>>> 6de478af6a1c1ba029c6f6556a4df8a64f4cd7a3
+        // Removed the 'name' field
       })
     )
     .max(4, "Cannot have more than 4 audio tracks")
