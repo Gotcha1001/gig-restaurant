@@ -55,7 +55,7 @@ model Band {
   imageUrl     String?
   bandMembers  String[]
   photos       String[]
-  audioTracks  Json? // This will store an array of objects: [{ url: string, name: string }]
+  audioTracks  String[]
   location     String
   latitude     Float?
   longitude    Float?
